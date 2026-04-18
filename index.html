@@ -1,33 +1,204 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="扣子编程，你的 AI 开发伙伴已就位" />
-    <title>扣子编程 - AI 开发伙伴</title>
-    <link rel="stylesheet" href="/styles/main.css" />
-  </head>
-  <body>
-    <div id="app">
-      <main class="main-wrapper">
-        <div class="content-container">
-          <img
-            src="https://lf-coze-web-cdn.coze.cn/obj/eden-cn/lm-lgvj/ljhwZthlaukjlkulzlp/coze-coding/icon/coze-coding.gif"
-            alt="扣子编程 Logo"
-            class="logo-image"
-          />
-          <div>
-            <div class="text-container">
-              <h1 class="heading">
-                应用开发中
-              </h1>
-              <p class="description">
-                请稍后，页面即将呈现
-              </p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AlgoViz - 数据结构与算法可视化学习平台</title>
+    <link rel="stylesheet" href="/styles/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/index.html" class="nav-logo">
+                <span class="nav-logo-icon">📊</span>
+                <span class="text-gradient">AlgoViz</span>
+            </a>
+            <div class="nav-links">
+                <a href="/index.html" class="nav-link active">首页</a>
+                <a href="/pages/datastructures.html" class="nav-link">数据结构</a>
+                <a href="/pages/algorithms.html" class="nav-link">算法演示</a>
             </div>
-          </div>
         </div>
-      </main>
-    </div>
-  </body>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Hero Section -->
+        <section class="hero" style="padding: 6rem 0; text-align: center; background: linear-gradient(180deg, rgba(102,126,234,0.1) 0%, transparent 100%);">
+            <div class="container">
+                <h1 style="margin-bottom: 1.5rem;">
+                    <span class="text-gradient">数据结构</span> 与 
+                    <span class="text-gradient">算法</span> 可视化学习
+                </h1>
+                <p style="font-size: 1.25rem; color: var(--text-secondary); max-width: 700px; margin: 0 auto 2rem;">
+                    通过交互式动画深入理解常见数据结构和经典算法原理， 
+                    让抽象的概念变得直观可见
+                </p>
+                <div style="display: flex; gap: 1rem; justify-content: center;">
+                    <a href="/pages/datastructures.html" class="btn btn-primary" style="padding: 0.875rem 2rem; font-size: 1.1rem;">
+                        探索数据结构
+                    </a>
+                    <a href="/pages/algorithms.html" class="btn btn-secondary" style="padding: 0.875rem 2rem; font-size: 1.1rem;">
+                        查看算法演示
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features" style="padding: 4rem 0;">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 3rem;">为什么选择 AlgoViz?</h2>
+                <div class="grid grid-3">
+                    <div class="card slide-up" style="text-align: center;">
+                        <div class="card-icon">🎯</div>
+                        <h3 class="card-title">精准可视化</h3>
+                        <p class="card-desc">将复杂的数据结构和算法执行过程以动画形式呈现，每一步操作清晰可见</p>
+                    </div>
+                    <div class="card slide-up" style="text-align: center;">
+                        <div class="card-icon">🎮</div>
+                        <h3 class="card-title">交互控制</h3>
+                        <p class="card-desc">播放、暂停、单步执行、调节速度，完全掌控学习节奏</p>
+                    </div>
+                    <div class="card slide-up" style="text-align: center;">
+                        <div class="card-icon">📝</div>
+                        <h3 class="card-title">代码对照</h3>
+                        <p class="card-desc">实时显示伪代码并高亮当前执行行，对照理解算法逻辑</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Structures Preview -->
+        <section style="padding: 4rem 0; background: rgba(102,126,234,0.05);">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 1rem;">支持的数据结构</h2>
+                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 3rem;">
+                    涵盖所有基础和高级数据结构
+                </p>
+                <div class="grid grid-4">
+                    <a href="/pages/datastructures.html#array" class="card" style="text-align: center; cursor: pointer;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">📦</div>
+                        <h4 class="card-title">数组</h4>
+                        <p class="card-desc" style="font-size: 0.85rem;">Array - 线性表结构</p>
+                    </a>
+                    <a href="/pages/datastructures.html#linkedlist" class="card" style="text-align: center; cursor: pointer;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔗</div>
+                        <h4 class="card-title">链表</h4>
+                        <p class="card-desc" style="font-size: 0.85rem;">Linked List</p>
+                    </a>
+                    <a href="/pages/datastructures.html#stack" class="card" style="text-align: center; cursor: pointer;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">📚</div>
+                        <h4 class="card-title">栈</h4>
+                        <p class="card-desc" style="font-size: 0.85rem;">Stack - LIFO</p>
+                    </a>
+                    <a href="/pages/datastructures.html#queue" class="card" style="text-align: center; cursor: pointer;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🚶</div>
+                        <h4 class="card-title">队列</h4>
+                        <p class="card-desc" style="font-size: 0.85rem;">Queue - FIFO</p>
+                    </a>
+                    <a href="/pages/datastructures.html#tree" class="card" style="text-align: center; cursor: pointer;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🌳</div>
+                        <h4 class="card-title">二叉树</h4>
+                        <p class="card-desc" style="font-size: 0.85rem;">Binary Tree</p>
+                    </a>
+                    <a href="/pages/datastructures.html#hash" class="card" style="text-align: center; cursor: pointer;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔍</div>
+                        <h4 class="card-title">哈希表</h4>
+                        <p class="card-desc" style="font-size: 0.85rem;">Hash Table</p>
+                    </a>
+                    <a href="/pages/datastructures.html#graph" class="card" style="text-align: center; cursor: pointer;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🕸️</div>
+                        <h4 class="card-title">图</h4>
+                        <p class="card-desc" style="font-size: 0.85rem;">Graph</p>
+                    </a>
+                    <a href="/pages/datastructures.html#heap" class="card" style="text-align: center; cursor: pointer;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🏔️</div>
+                        <h4 class="card-title">堆</h4>
+                        <p class="card-desc" style="font-size: 0.85rem;">Heap</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Algorithms Preview -->
+        <section style="padding: 4rem 0;">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 1rem;">支持的算法演示</h2>
+                <p style="text-align: center; color: var(--text-secondary); margin-bottom: 3rem;">
+                    经典算法的动态执行过程
+                </p>
+                <div class="grid grid-4">
+                    <a href="/pages/algorithms.html#sorting" class="card" style="text-align: center; cursor: pointer;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">📊</div>
+                        <h4 class="card-title">排序算法</h4>
+                        <p class="card-desc" style="font-size: 0.85rem;">冒泡/选择/插入/快速/归并/堆排序</p>
+                    </a>
+                    <a href="/pages/algorithms.html#searching" class="card" style="text-align: center; cursor: pointer;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔎</div>
+                        <h4 class="card-title">查找算法</h4>
+                        <p class="card-desc" style="font-size: 0.85rem;">二分查找</p>
+                    </a>
+                    <a href="/pages/algorithms.html#tree-traversal" class="card" style="text-align: center; cursor: pointer;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🌲</div>
+                        <h4 class="card-title">树遍历</h4>
+                        <p class="card-desc" style="font-size: 0.85rem;">前/中/后序遍历</p>
+                    </a>
+                    <a href="/pages/algorithms.html#graph-traversal" class="card" style="text-align: center; cursor: pointer;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🗺️</div>
+                        <h4 class="card-title">图遍历</h4>
+                        <p class="card-desc" style="font-size: 0.85rem;">DFS/BFS</p>
+                    </a>
+                    <a href="/pages/algorithms.html#dijkstra" class="card" style="text-align: center; cursor: pointer;">
+                        <div style="font-size: 2.5rem; margin-bottom: 1rem;">🛤️</div>
+                        <h4 class="card-title">最短路径</h4>
+                        <p class="card-desc" style="font-size: 0.85rem;">Dijkstra 算法</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Getting Started -->
+        <section style="padding: 4rem 0; background: rgba(102,126,234,0.05);">
+            <div class="container">
+                <h2 style="text-align: center; margin-bottom: 3rem;">快速开始</h2>
+                <div class="grid grid-3">
+                    <div class="card" style="text-align: center;">
+                        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 1.5rem; font-weight: 700;">1</div>
+                        <h4 class="card-title">选择主题</h4>
+                        <p class="card-desc">从左侧导航进入数据结构或算法页面</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 1.5rem; font-weight: 700;">2</div>
+                        <h4 class="card-title">输入数据</h4>
+                        <p class="card-desc">使用随机生成或手动输入你想要的测试数据</p>
+                    </div>
+                    <div class="card" style="text-align: center;">
+                        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), var(--secondary)); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.5rem; font-size: 1.5rem; font-weight: 700;">3</div>
+                        <h4 class="card-title">观看执行</h4>
+                        <p class="card-desc">点击播放按钮观看动画，理解算法原理</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer style="padding: 2rem 0; text-align: center; border-top: 1px solid var(--border);">
+            <div class="container">
+                <p style="color: var(--text-secondary); font-size: 0.9rem;">
+                    AlgoViz - 数据结构与算法可视化学习平台
+                </p>
+                <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.5rem;">
+                    让学习变得更有趣
+                </p>
+            </div>
+        </footer>
+    </main>
+
+    <script src="/js/main.js"></script>
+</body>
 </html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据结构 - AlgoViz</title>
+    <link rel="stylesheet" href="/styles/main.css">
+    <link rel="stylesheet" href="/styles/datastructures.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/index.html" class="nav-logo">
+                <span class="nav-logo-icon">📊</span>
+                <span class="text-gradient">AlgoViz</span>
+            </a>
+            <div class="nav-links">
+                <a href="/index.html" class="nav-link">首页</a>
+                <a href="/pages/datastructures.html" class="nav-link active">数据结构</a>
+                <a href="/pages/algorithms.html" class="nav-link">算法演示</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container" style="padding-top: 2rem; padding-bottom: 2rem;">
+            <!-- Data Structure Selector -->
+            <div class="ds-selector">
+                <h2 style="margin-bottom: 1.5rem;">选择数据结构</h2>
+                <div class="ds-grid">
+                    <button class="ds-btn active" data-ds="array" id="array">
+                        <span class="ds-icon">📦</span>
+                        <span class="ds-name">数组</span>
+                    </button>
+                    <button class="ds-btn" data-ds="linkedlist" id="linkedlist">
+                        <span class="ds-icon">🔗</span>
+                        <span class="ds-name">链表</span>
+                    </button>
+                    <button class="ds-btn" data-ds="stack" id="stack">
+                        <span class="ds-icon">📚</span>
+                        <span class="ds-name">栈</span>
+                    </button>
+                    <button class="ds-btn" data-ds="queue" id="queue">
+                        <span class="ds-icon">🚶</span>
+                        <span class="ds-name">队列</span>
+                    </button>
+                    <button class="ds-btn" data-ds="tree" id="tree">
+                        <span class="ds-icon">🌳</span>
+                        <span class="ds-name">二叉树</span>
+                    </button>
+                    <button class="ds-btn" data-ds="hash" id="hash">
+                        <span class="ds-icon">🔍</span>
+                        <span class="ds-name">哈希表</span>
+                    </button>
+                    <button class="ds-btn" data-ds="graph" id="graph">
+                        <span class="ds-icon">🕸️</span>
+                        <span class="ds-name">图</span>
+                    </button>
+                    <button class="ds-btn" data-ds="heap" id="heap">
+                        <span class="ds-icon">🏔️</span>
+                        <span class="ds-name">堆</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Layout: Info + Visualization -->
+            <div class="main-layout">
+                <!-- Left Column: Controls + Info -->
+                <div class="left-column">
+                    <!-- Info Panel -->
+                    <div class="info-panel" id="infoPanel">
+                        <h3 class="panel-title">
+                            <span id="dsTitle">数组 Array</span>
+                        </h3>
+                        <div class="info-item">
+                            <span class="info-label">简介</span>
+                            <span class="info-value" id="dsDescription">数组是最基本的数据结构，用一段连续的内存空间存储相同类型的数据元素。</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">时间复杂度</span>
+                            <div class="info-value">
+                                <span class="complexity-badge">访问 O(1)</span>
+                                <span class="complexity-badge">查找 O(n)</span>
+                                <span class="complexity-badge">插入 O(n)</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">空间复杂度</span>
+                            <div class="info-value">
+                                <span class="complexity-badge">O(n)</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">核心特点</span>
+                            <span class="info-value" id="dsFeatures">- 连续内存空间<br>- 支持随机访问<br>- 插入删除效率低</span>
+                        </div>
+                    </div>
+
+                    <!-- Control Panel -->
+                    <div class="control-panel" id="controlPanel">
+                        <div class="control-section">
+                            <div class="control-section-title">数据输入</div>
+                            <div class="control-row">
+                                <input type="text" class="form-input" id="dataInput" placeholder="输入数据 (逗号分隔)" value="23, 45, 12, 67, 34, 89, 56">
+                                <button class="btn btn-secondary" id="randomBtn">随机</button>
+                            </div>
+                        </div>
+                        
+                        <div class="control-section">
+                            <div class="control-section-title">操作</div>
+                            <div class="control-row" id="operationButtons">
+                                <!-- Dynamic operation buttons will be inserted here -->
+                            </div>
+                        </div>
+
+                        <div class="control-section">
+                            <div class="control-section-title">动画控制</div>
+                            <div class="control-row">
+                                <div class="control-btn-group">
+                                    <button class="control-btn" id="playBtn" title="播放">
+                                        ▶
+                                    </button>
+                                    <button class="control-btn" id="pauseBtn" title="暂停" disabled>
+                                        ⏸
+                                    </button>
+                                    <button class="control-btn" id="stepBackBtn" title="上一步">
+                                        ⏮
+                                    </button>
+                                    <button class="control-btn" id="stepForwardBtn" title="下一步">
+                                        ⏭
+                                    </button>
+                                    <button class="control-btn" id="resetBtn" title="重置">
+                                        ↻
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="control-row" style="margin-top: 1rem;">
+                                <label class="form-label" style="min-width: auto; margin-right: 1rem;">速度</label>
+                                <input type="range" class="form-range" id="speedSlider" min="100" max="2000" value="500">
+                                <span id="speedValue" style="margin-left: 0.5rem; font-size: 0.9rem;">0.5x</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Visualization + Pseudocode -->
+                <div class="right-column">
+                    <!-- Visualization Area -->
+                    <div class="visualization-container">
+                        <div class="viz-header">
+                            <h3 id="vizTitle">数组可视化</h3>
+                            <span id="vizStatus" class="viz-status">就绪</span>
+                        </div>
+                        <div class="visualization-canvas" id="visualizationCanvas">
+                            <!-- Dynamic visualization content -->
+                        </div>
+                    </div>
+
+                    <!-- Pseudocode Panel -->
+                    <div class="pseudocode-panel" id="pseudocodePanel">
+                        <div class="control-section-title">伪代码</div>
+                        <div id="pseudocodeContent">
+                            <!-- Dynamic pseudocode will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/visualizations/base.js"></script>
+    <script src="/js/visualizations/array.js"></script>
+    <script src="/js/visualizations/linkedlist.js"></script>
+    <script src="/js/visualizations/stack.js"></script>
+    <script src="/js/visualizations/queue.js"></script>
+    <script src="/js/visualizations/tree.js"></script>
+    <script src="/js/visualizations/hash.js"></script>
+    <script src="/js/visualizations/graph.js"></script>
+    <script src="/js/visualizations/heap.js"></script>
+    <script src="/js/datastructures.js"></script>
+</body>
+</html>

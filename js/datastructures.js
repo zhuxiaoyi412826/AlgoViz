@@ -1,0 +1,503 @@
+/**
+ * 数据结构页面主控制器
+ */
+
+// 可视化器实例
+let visualizers = {};
+
+// 当前选中的数据结构
+let currentDS = 'array';
+
+// 当前选中的操作
+let currentOperation = null;
+
+// 动画控制器
+let animationController = null;
+
+// DOM元素
+const elements = {
+    dsButtons: null,
+    dataInput: null,
+    randomBtn: null,
+    operationButtons: null,
+    playBtn: null,
+    pauseBtn: null,
+    stepBackBtn: null,
+    stepForwardBtn: null,
+    resetBtn: null,
+    speedSlider: null,
+    speedValue: null,
+    visualizationCanvas: null,
+    pseudocodeContent: null,
+    vizStatus: null,
+    infoPanel: null
+};
+
+// 初始化
+document.addEventListener('DOMContentLoaded', () => {
+    initElements();
+    initEventListeners();
+    initVisualizers();
+    selectDataStructure('array');
+});
+
+// 初始化DOM元素
+function initElements() {
+    elements.dsButtons = document.querySelectorAll('.ds-btn');
+    elements.dataInput = document.getElementById('dataInput');
+    elements.randomBtn = document.getElementById('randomBtn');
+    elements.operationButtons = document.getElementById('operationButtons');
+    elements.playBtn = document.getElementById('playBtn');
+    elements.pauseBtn = document.getElementById('pauseBtn');
+    elements.stepBackBtn = document.getElementById('stepBackBtn');
+    elements.stepForwardBtn = document.getElementById('stepForwardBtn');
+    elements.resetBtn = document.getElementById('resetBtn');
+    elements.speedSlider = document.getElementById('speedSlider');
+    elements.speedValue = document.getElementById('speedValue');
+    elements.visualizationCanvas = document.getElementById('visualizationCanvas');
+    elements.pseudocodeContent = document.getElementById('pseudocodeContent');
+    elements.vizStatus = document.getElementById('vizStatus');
+    elements.infoPanel = document.getElementById('infoPanel');
+}
+
+// 初始化事件监听
+function initEventListeners() {
+    // 数据结构选择
+    elements.dsButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const ds = btn.dataset.ds;
+            selectDataStructure(ds);
+        });
+    });
+
+    // 随机数据
+    elements.randomBtn.addEventListener('click', generateRandomData);
+
+    // 播放控制
+    elements.playBtn.addEventListener('click', play);
+    elements.pauseBtn.addEventListener('click', pause);
+    elements.stepBackBtn.addEventListener('click', stepBack);
+    elements.stepForwardBtn.addEventListener('click', stepForward);
+    elements.resetBtn.addEventListener('click', reset);
+
+    // 速度控制
+    elements.speedSlider.addEventListener('input', updateSpeed);
+}
+
+// 初始化可视化器
+function initVisualizers() {
+    visualizers.array = new ArrayVisualizer('visualizationCanvas');
+    visualizers.linkedlist = new LinkedListVisualizer('visualizationCanvas');
+    visualizers.stack = new StackVisualizer('visualizationCanvas');
+    visualizers.queue = new QueueVisualizer('visualizationCanvas');
+    visualizers.tree = new TreeVisualizer('visualizationCanvas');
+    visualizers.hash = new HashTableVisualizer('visualizationCanvas');
+    visualizers.graph = new GraphVisualizer('visualizationCanvas');
+    visualizers.heap = new HeapVisualizer('visualizationCanvas');
+
+    // 设置默认数据
+    visualizers.array.setData([23, 45, 12, 67, 34, 89, 56]);
+    visualizers.linkedlist.fromArray([10, 20, 30, 40, 50]);
+    visualizers.stack.setData([15, 25, 35]);
+    visualizers.queue.setData([5, 10, 15, 20]);
+    visualizers.tree.fromArray([50, 30, 70, 20, 40, 60, 80]);
+    visualizers.hash.setData([[10, 'A'], [25, 'B'], [35, 'C'], [50, 'D']]);
+    visualizers.graph.generateRandom(6, 0.4);
+    visualizers.heap.fromArray([15, 10, 20, 8, 25, 30, 12]);
+}
+
+// 选择数据结构
+function selectDataStructure(ds) {
+    // 更新按钮状态
+    elements.dsButtons.forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.ds === ds);
+    });
+
+    currentDS = ds;
+
+    // 更新信息面板
+    updateInfoPanel(ds);
+
+    // 更新操作按钮
+    updateOperationButtons(ds);
+
+    // 更新伪代码
+    updatePseudocode(ds);
+
+    // 更新可视化
+    const viz = visualizers[ds];
+    if (viz) {
+        viz.render();
+    }
+
+    // 重置状态
+    updateStatus('ready');
+}
+
+// 更新信息面板
+function updateInfoPanel(ds) {
+    const info = DS_INFO[ds];
+    if (!info) return;
+
+    document.getElementById('dsTitle').textContent = info.title;
+    document.getElementById('dsDescription').textContent = info.description;
+    document.getElementById('dsFeatures').innerHTML = info.features.map(f => `- ${f}`).join('<br>');
+
+    // 更新复杂度
+    const complexityContainer = elements.infoPanel.querySelector('.info-value:last-of-type');
+    if (complexityContainer) {
+        let complexityHtml = '';
+        for (const [key, value] of Object.entries(info.timeComplexity)) {
+            complexityHtml += `<span class="complexity-badge">${key} ${value}</span>`;
+        }
+        complexityContainer.innerHTML = complexityHtml;
+    }
+
+    // 更新空间复杂度
+    const spaceEl = document.querySelector('#infoPanel .info-item:nth-child(3) .info-value');
+    if (spaceEl) {
+        spaceEl.innerHTML = `<span class="complexity-badge">${info.spaceComplexity}</span>`;
+    }
+}
+
+// 更新操作按钮
+function updateOperationButtons(ds) {
+    const operations = getOperations(ds);
+    
+    elements.operationButtons.innerHTML = operations.map(op => `
+        <button class="btn btn-secondary" onclick="executeOperation('${op.id}')">
+            ${op.icon} ${op.name}
+        </button>
+    `).join('');
+}
+
+// 获取数据结构操作
+function getOperations(ds) {
+    const operations = {
+        array: [
+            { id: 'access', name: '访问', icon: '👁️' },
+            { id: 'search', name: '查找', icon: '🔍' },
+            { id: 'insert', name: '插入', icon: '➕' },
+            { id: 'delete', name: '删除', icon: '➖' }
+        ],
+        linkedlist: [
+            { id: 'traverse', name: '遍历', icon: '🚶' },
+            { id: 'search', name: '查找', icon: '🔍' },
+            { id: 'insertHead', name: '头部插入', icon: '⬆️' },
+            { id: 'insertTail', name: '尾部插入', icon: '⬇️' }
+        ],
+        stack: [
+            { id: 'push', name: '入栈', icon: '⬇️' },
+            { id: 'pop', name: '出栈', icon: '⬆️' },
+            { id: 'peek', name: '查看栈顶', icon: '👁️' }
+        ],
+        queue: [
+            { id: 'enqueue', name: '入队', icon: '➡️' },
+            { id: 'dequeue', name: '出队', icon: '⬅️' },
+            { id: 'front', name: '查看队首', icon: '👁️' }
+        ],
+        tree: [
+            { id: 'traverseInorder', name: '中序遍历', icon: '↔️' },
+            { id: 'traversePreorder', name: '前序遍历', icon: '➡️' },
+            { id: 'traversePostorder', name: '后序遍历', icon: '⬅️' },
+            { id: 'traverseLevel', name: '层序遍历', icon: '⬇️' }
+        ],
+        hash: [
+            { id: 'insert', name: '插入', icon: '➕' },
+            { id: 'search', name: '查找', icon: '🔍' },
+            { id: 'delete', name: '删除', icon: '➖' }
+        ],
+        graph: [
+            { id: 'dfs', name: 'DFS遍历', icon: '🧭' },
+            { id: 'bfs', name: 'BFS遍历', icon: '🌊' }
+        ],
+        heap: [
+            { id: 'insert', name: '插入', icon: '➕' },
+            { id: 'extract', name: '提取堆顶', icon: '⬆️' },
+            { id: 'sort', name: '堆排序', icon: '📊' }
+        ]
+    };
+
+    return operations[ds] || [];
+}
+
+// 更新伪代码
+function updatePseudocode(ds) {
+    const code = PSEUDOCODES[ds] || ['// No pseudocode available'];
+    
+    elements.pseudocodeContent.innerHTML = code.map((line, index) => `
+        <div class="pseudocode-line" data-line="${index}">
+            ${line}
+        </div>
+    `).join('');
+}
+
+// 高亮伪代码行
+function highlightPseudocodeLine(lineIndex) {
+    document.querySelectorAll('.pseudocode-line').forEach((el, i) => {
+        el.classList.toggle('highlight', i === lineIndex);
+    });
+}
+
+// 生成随机数据
+function generateRandomData() {
+    const viz = visualizers[currentDS];
+    if (!viz) return;
+
+    switch (currentDS) {
+        case 'array':
+            viz.setData(Utils.randomArray(8, 1, 99));
+            break;
+        case 'linkedlist':
+            viz.fromArray(Utils.randomArray(6, 1, 99));
+            break;
+        case 'stack':
+            viz.setData(Utils.randomArray(5, 1, 99));
+            break;
+        case 'queue':
+            viz.setData(Utils.randomArray(5, 1, 99));
+            break;
+        case 'tree':
+            viz.fromArray(Utils.randomArray(7, 1, 99));
+            break;
+        case 'hash':
+            const pairs = Utils.randomArray(5, 1, 10).map((v, i) => [v * 7, String.fromCharCode(65 + i)]);
+            viz.setData(pairs);
+            break;
+        case 'graph':
+            viz.generateRandom(6, 0.4);
+            break;
+        case 'heap':
+            viz.fromArray(Utils.randomArray(7, 1, 99));
+            break;
+    }
+
+    viz.render();
+}
+
+// 执行操作
+function executeOperation(opId) {
+    const viz = visualizers[currentDS];
+    if (!viz) return;
+
+    // 获取输入数据
+    const inputValue = parseInt(elements.dataInput.value.split(',')[0]) || Utils.randomInt(1, 99);
+
+    switch (currentDS) {
+        case 'array':
+            switch (opId) {
+                case 'access':
+                    viz.search(inputValue);
+                    break;
+                case 'search':
+                    viz.search(inputValue);
+                    break;
+                case 'insert':
+                    viz.insert(viz.getData().length, inputValue);
+                    break;
+                case 'delete':
+                    viz.delete(viz.getData().length - 1);
+                    break;
+            }
+            break;
+
+        case 'linkedlist':
+            switch (opId) {
+                case 'traverse':
+                    viz.traverse();
+                    break;
+                case 'search':
+                    viz.search(inputValue);
+                    break;
+                case 'insertHead':
+                    viz.insertAtHead(inputValue);
+                    break;
+                case 'insertTail':
+                    viz.insertAtTail(inputValue);
+                    break;
+            }
+            break;
+
+        case 'stack':
+            switch (opId) {
+                case 'push':
+                    viz.push(inputValue);
+                    break;
+                case 'pop':
+                    viz.pop();
+                    break;
+                case 'peek':
+                    alert(`栈顶元素: ${viz.peek()}`);
+                    break;
+            }
+            break;
+
+        case 'queue':
+            switch (opId) {
+                case 'enqueue':
+                    viz.enqueue(inputValue);
+                    break;
+                case 'dequeue':
+                    viz.dequeue();
+                    break;
+                case 'front':
+                    alert(`队首元素: ${viz.front()}`);
+                    break;
+            }
+            break;
+
+        case 'tree':
+            switch (opId) {
+                case 'traverseInorder':
+                    viz.inorder();
+                    break;
+                case 'traversePreorder':
+                    viz.preorder();
+                    break;
+                case 'traversePostorder':
+                    viz.postorder();
+                    break;
+                case 'traverseLevel':
+                    viz.levelorder();
+                    break;
+            }
+            break;
+
+        case 'hash':
+            const key = inputValue;
+            const value = String.fromCharCode(65 + (key % 26));
+            switch (opId) {
+                case 'insert':
+                    viz.insert(key, value);
+                    break;
+                case 'search':
+                    viz.search(key);
+                    break;
+                case 'delete':
+                    viz.delete(key);
+                    break;
+            }
+            break;
+
+        case 'graph':
+            switch (opId) {
+                case 'dfs':
+                    viz.dfs('A');
+                    break;
+                case 'bfs':
+                    viz.bfs('A');
+                    break;
+            }
+            break;
+
+        case 'heap':
+            switch (opId) {
+                case 'insert':
+                    viz.insert(inputValue);
+                    break;
+                case 'extract':
+                    viz.extractRoot();
+                    break;
+                case 'sort':
+                    viz.heapSort();
+                    break;
+            }
+            break;
+    }
+
+    // 设置当前可视化器的动画回调
+    animationController = viz;
+    viz.onStepChange = (step) => {
+        updateStatus('running');
+    };
+    viz.onComplete = () => {
+        updateStatus('completed');
+        updateControlButtons(false);
+    };
+}
+
+// 播放
+function play() {
+    if (animationController) {
+        animationController.play();
+        updateStatus('running');
+        updateControlButtons(true);
+    }
+}
+
+// 暂停
+function pause() {
+    if (animationController) {
+        animationController.pause();
+        updateStatus('paused');
+        updateControlButtons(false);
+    }
+}
+
+// 上一步
+function stepBack() {
+    if (animationController) {
+        animationController.stepBack();
+        updateStatus('paused');
+    }
+}
+
+// 下一步
+function stepForward() {
+    if (animationController) {
+        animationController.stepForward();
+    }
+}
+
+// 重置
+function reset() {
+    if (animationController) {
+        animationController.reset();
+        animationController.render();
+        updateStatus('ready');
+        updateControlButtons(false);
+    }
+}
+
+// 更新速度
+function updateSpeed() {
+    const value = parseInt(elements.speedSlider.value);
+    const speed = 2000 - value; // 反转，使滑块向右更快
+    
+    if (animationController) {
+        animationController.setSpeed(speed);
+    }
+    
+    const speedText = (value / 1000).toFixed(1) + 'x';
+    elements.speedValue.textContent = speedText;
+}
+
+// 更新状态显示
+function updateStatus(status) {
+    const statusEl = elements.vizStatus;
+    statusEl.className = 'viz-status';
+    
+    switch (status) {
+        case 'ready':
+            statusEl.textContent = '就绪';
+            break;
+        case 'running':
+            statusEl.textContent = '运行中';
+            statusEl.classList.add('running');
+            break;
+        case 'paused':
+            statusEl.textContent = '已暂停';
+            statusEl.classList.add('running');
+            break;
+        case 'completed':
+            statusEl.textContent = '完成';
+            statusEl.classList.add('completed');
+            break;
+    }
+}
+
+// 更新控制按钮状态
+function updateControlButtons(isPlaying) {
+    elements.playBtn.disabled = isPlaying;
+    elements.pauseBtn.disabled = !isPlaying;
+}

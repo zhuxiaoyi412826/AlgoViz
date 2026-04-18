@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>算法演示 - AlgoViz</title>
+    <link rel="stylesheet" href="/styles/main.css">
+    <link rel="stylesheet" href="/styles/algorithms.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/index.html" class="nav-logo">
+                <span class="nav-logo-icon">📊</span>
+                <span class="text-gradient">AlgoViz</span>
+            </a>
+            <div class="nav-links">
+                <a href="/index.html" class="nav-link">首页</a>
+                <a href="/pages/datastructures.html" class="nav-link">数据结构</a>
+                <a href="/pages/algorithms.html" class="nav-link active">算法演示</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container" style="padding-top: 2rem; padding-bottom: 2rem;">
+            <!-- Algorithm Selector -->
+            <div class="algo-category">
+                <h2 style="margin-bottom: 1rem;">排序算法</h2>
+                <div class="algo-grid" id="sortingAlgos">
+                    <button class="algo-btn active" data-algo="bubbleSort">
+                        <span class="algo-icon">🫧</span>
+                        <span class="algo-name">冒泡排序</span>
+                    </button>
+                    <button class="algo-btn" data-algo="selectionSort">
+                        <span class="algo-icon">👆</span>
+                        <span class="algo-name">选择排序</span>
+                    </button>
+                    <button class="algo-btn" data-algo="insertionSort">
+                        <span class="algo-icon">📥</span>
+                        <span class="algo-name">插入排序</span>
+                    </button>
+                    <button class="algo-btn" data-algo="quickSort">
+                        <span class="algo-icon">⚡</span>
+                        <span class="algo-name">快速排序</span>
+                    </button>
+                    <button class="algo-btn" data-algo="mergeSort">
+                        <span class="algo-icon">🔀</span>
+                        <span class="algo-name">归并排序</span>
+                    </button>
+                    <button class="algo-btn" data-algo="heapSort">
+                        <span class="algo-icon">🏔️</span>
+                        <span class="algo-name">堆排序</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="algo-category" id="searching">
+                <h2 style="margin-bottom: 1rem;">查找算法</h2>
+                <div class="algo-grid">
+                    <button class="algo-btn" data-algo="binarySearch">
+                        <span class="algo-icon">🔎</span>
+                        <span class="algo-name">二分查找</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="algo-category" id="tree-traversal">
+                <h2 style="margin-bottom: 1rem;">树遍历</h2>
+                <div class="algo-grid">
+                    <button class="algo-btn" data-algo="treeInorder">
+                        <span class="algo-icon">↔️</span>
+                        <span class="algo-name">中序遍历</span>
+                    </button>
+                    <button class="algo-btn" data-algo="treePreorder">
+                        <span class="algo-icon">➡️</span>
+                        <span class="algo-name">前序遍历</span>
+                    </button>
+                    <button class="algo-btn" data-algo="treePostorder">
+                        <span class="algo-icon">⬅️</span>
+                        <span class="algo-name">后序遍历</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="algo-category" id="graph-traversal">
+                <h2 style="margin-bottom: 1rem;">图遍历</h2>
+                <div class="algo-grid">
+                    <button class="algo-btn" data-algo="graphDFS">
+                        <span class="algo-icon">🧭</span>
+                        <span class="algo-name">深度优先 (DFS)</span>
+                    </button>
+                    <button class="algo-btn" data-algo="graphBFS">
+                        <span class="algo-icon">🌊</span>
+                        <span class="algo-name">广度优先 (BFS)</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="algo-category" id="dijkstra">
+                <h2 style="margin-bottom: 1rem;">最短路径</h2>
+                <div class="algo-grid">
+                    <button class="algo-btn" data-algo="dijkstra">
+                        <span class="algo-icon">🛤️</span>
+                        <span class="algo-name">Dijkstra</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Main Layout -->
+            <div class="algo-main-layout">
+                <!-- Left Column -->
+                <div class="algo-left-column">
+                    <!-- Info Panel -->
+                    <div class="info-panel" id="algoInfoPanel">
+                        <h3 class="panel-title" id="algoTitle">冒泡排序 Bubble Sort</h3>
+                        <div class="info-item">
+                            <span class="info-label">简介</span>
+                            <span class="info-value" id="algoDescription">通过相邻元素的比较和交换，把最大的元素逐步"冒泡"到数组末端。</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">时间复杂度</span>
+                            <div class="info-value">
+                                <span class="complexity-badge" id="algoTimeBest">最优 O(n)</span>
+                                <span class="complexity-badge" id="algoTimeAvg">平均 O(n²)</span>
+                                <span class="complexity-badge" id="algoTimeWorst">最坏 O(n²)</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">空间复杂度</span>
+                            <div class="info-value">
+                                <span class="complexity-badge" id="algoSpace">O(1)</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">核心思路</span>
+                            <span class="info-value" id="algoCoreIdea">重复遍历数组，比较相邻元素并在必要时交换位置，直到没有更多交换为止。</span>
+                        </div>
+                    </div>
+
+                    <!-- Control Panel -->
+                    <div class="control-panel" id="algoControlPanel">
+                        <div class="control-section">
+                            <div class="control-section-title">数据设置</div>
+                            <div class="form-group">
+                                <label class="form-label">数组大小</label>
+                                <input type="range" class="form-range" id="arraySizeSlider" min="5" max="20" value="10">
+                                <span id="arraySizeValue">10</span>
+                            </div>
+                            <div class="control-row" style="margin-top: 1rem;">
+                                <button class="btn btn-secondary" id="algoRandomBtn">生成随机数据</button>
+                                <input type="text" class="form-input" id="algoDataInput" placeholder="手动输入 (逗号分隔)" style="flex: 1;">
+                            </div>
+                        </div>
+
+                        <div class="control-section" id="searchTargetSection" style="display: none;">
+                            <div class="control-section-title">查找目标</div>
+                            <input type="number" class="form-input" id="searchTarget" placeholder="输入要查找的值">
+                        </div>
+
+                        <div class="control-section" id="graphConfigSection" style="display: none;">
+                            <div class="control-section-title">图设置</div>
+                            <button class="btn btn-secondary" id="generateGraphBtn">生成随机图</button>
+                        </div>
+
+                        <div class="control-section">
+                            <div class="control-section-title">动画控制</div>
+                            <div class="control-row">
+                                <div class="control-btn-group">
+                                    <button class="control-btn" id="algoPlayBtn" title="播放">
+                                        ▶
+                                    </button>
+                                    <button class="control-btn" id="algoPauseBtn" title="暂停" disabled>
+                                        ⏸
+                                    </button>
+                                    <button class="control-btn" id="algoStepBackBtn" title="上一步">
+                                        ⏮
+                                    </button>
+                                    <button class="control-btn" id="algoStepForwardBtn" title="下一步">
+                                        ⏭
+                                    </button>
+                                    <button class="control-btn" id="algoResetBtn" title="重置">
+                                        ↻
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="control-row" style="margin-top: 1rem;">
+                                <label class="form-label" style="min-width: auto; margin-right: 1rem;">速度</label>
+                                <input type="range" class="form-range" id="algoSpeedSlider" min="50" max="1500" value="300">
+                                <span id="algoSpeedValue">1x</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Stats Panel -->
+                    <div class="stats-panel" id="statsPanel">
+                        <div class="stats-title">执行统计</div>
+                        <div class="stats-grid">
+                            <div class="stat-item">
+                                <span class="stat-value" id="statComparisons">0</span>
+                                <span class="stat-label">比较次数</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="statSwaps">0</span>
+                                <span class="stat-label">交换次数</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="statCurrentStep">0</span>
+                                <span class="stat-label">当前步骤</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-value" id="statTotalSteps">0</span>
+                                <span class="stat-label">总步骤数</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column -->
+                <div class="algo-right-column">
+                    <!-- Visualization Area -->
+                    <div class="visualization-container">
+                        <div class="viz-header">
+                            <h3 id="algoVizTitle">排序可视化</h3>
+                            <span id="algoVizStatus" class="viz-status">就绪</span>
+                        </div>
+                        <div class="visualization-canvas" id="algoVisualizationCanvas">
+                            <!-- Dynamic visualization content -->
+                        </div>
+                    </div>
+
+                    <!-- Pseudocode Panel -->
+                    <div class="pseudocode-panel" id="algoPseudocodePanel">
+                        <div class="control-section-title">伪代码</div>
+                        <div id="algoPseudocodeContent">
+                            <!-- Dynamic pseudocode will be inserted here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/algorithms/sorting.js"></script>
+    <script src="/js/algorithms/searching.js"></script>
+    <script src="/js/algorithms/traversal.js"></script>
+    <script src="/js/algorithms/graph.js"></script>
+    <script src="/js/algorithms/dijkstra.js"></script>
+    <script src="/js/algorithms.js"></script>
+</body>
+</html>

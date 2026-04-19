@@ -242,7 +242,6 @@ h4 { font-size: 1.25rem; }
     font-size: 1rem;
     line-height: 36px;
     text-align: center;
-    color: var(--text-primary);
 }
 
 .theme-toggle:hover {
@@ -250,19 +249,29 @@ h4 { font-size: 1.25rem; }
     border-color: var(--primary);
 }
 
-.theme-toggle .icon {
-    display: none;
+/* Default dark mode: show moon */
+.theme-toggle {
+    color: #a0a0b8;
 }
 
 .theme-toggle .icon-moon {
     display: inline;
 }
 
-html[data-theme="light"] .theme-toggle .icon-moon {
+.theme-toggle .icon-sun {
     display: none;
 }
 
-html[data-theme="light"] .theme-toggle .icon-sun {
+/* Light mode: show sun */
+.theme-toggle.light-active {
+    color: #fbbf24;
+}
+
+.theme-toggle.light-active .icon-moon {
+    display: none;
+}
+
+.theme-toggle.light-active .icon-sun {
     display: inline;
 }
 

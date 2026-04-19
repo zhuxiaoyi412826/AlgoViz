@@ -7,11 +7,9 @@ const ThemeManager = {
     STORAGE_KEY: 'algoviz-theme',
     
     init() {
-        // 从 localStorage 读取或默认暗色主题
         const savedTheme = localStorage.getItem(this.STORAGE_KEY) || 'dark';
         this.setTheme(savedTheme);
         
-        // 绑定切换按钮
         const toggleBtn = document.getElementById('themeToggle');
         if (toggleBtn) {
             toggleBtn.addEventListener('click', () => this.toggle());
@@ -19,16 +17,22 @@ const ThemeManager = {
     },
     
     setTheme(theme) {
-        // 设置到 html 元素
         document.documentElement.setAttribute('data-theme', theme);
         localStorage.setItem(this.STORAGE_KEY, theme);
-        console.log('Theme set to:', theme);
+        
+        const toggleBtn = document.getElementById('themeToggle');
+        if (toggleBtn) {
+            if (theme === 'light') {
+                toggleBtn.classList.add('light-active');
+            } else {
+                toggleBtn.classList.remove('light-active');
+            }
+        }
     },
     
     toggle() {
         const current = document.documentElement.getAttribute('data-theme') || 'dark';
         const next = current === 'dark' ? 'light' : 'dark';
-        console.log('Toggle from', current, 'to', next);
         this.setTheme(next);
     }
 };

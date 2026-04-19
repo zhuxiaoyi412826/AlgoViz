@@ -16,7 +16,7 @@ const elements = {};
 
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
-    ThemeManager.init();
+    initTheme();
     initElements();
     initEventListeners();
     initVisualizers();

@@ -35,7 +35,7 @@ const elements = {
 
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
-    ThemeManager.init();
+    initTheme();
     initElements();
     initEventListeners();
     initVisualizers();
@@ -184,6 +184,11 @@ function initVisualizers() {
     visualizers.hash = new HashTableVisualizer('visualizationCanvas');
     visualizers.graph = new GraphVisualizer('visualizationCanvas');
     visualizers.heap = new HeapVisualizer('visualizationCanvas');
+    visualizers.trie = new TrieVisualizer('visualizationCanvas');
+    visualizers.unionfind = new UnionFindVisualizer('visualizationCanvas');
+    visualizers.segmenttree = new SegmentTreeVisualizer('visualizationCanvas');
+    visualizers.dp = new DPVisualizer('visualizationCanvas');
+    visualizers.kmp = new KMPVisualizer('visualizationCanvas');
 
     // 设置默认数据
     visualizers.array.setData([23, 45, 12, 67, 34, 89, 56]);
@@ -194,6 +199,11 @@ function initVisualizers() {
     visualizers.hash.setData([[10, 'A'], [25, 'B'], [35, 'C'], [50, 'D']]);
     visualizers.graph.generateRandom(6, 0.4);
     visualizers.heap.fromArray([15, 10, 20, 8, 25, 30, 12]);
+    visualizers.trie.setData(['apple', 'app', 'application', 'apply', 'banana', 'band']);
+    visualizers.unionfind.setData(6);
+    visualizers.segmenttree.setData([1, 3, 5, 7, 9, 11]);
+    visualizers.dp.setData([10, 30, 20, 50], [15, 20, 30, 40]);
+    visualizers.kmp.setData('ABABDABACDABABCABAB', 'ABABCABAB');
 }
 
 // 选择数据结构
@@ -305,6 +315,30 @@ function getOperations(ds) {
             { id: 'insert', name: '插入', icon: '➕' },
             { id: 'extract', name: '提取堆顶', icon: '⬆️' },
             { id: 'sort', name: '堆排序', icon: '📊' }
+        ],
+        trie: [
+            { id: 'insert', name: '插入单词', icon: '➕' },
+            { id: 'search', name: '查找单词', icon: '🔍' },
+            { id: 'prefix', name: '前缀匹配', icon: '🔎' }
+        ],
+        unionfind: [
+            { id: 'union', name: '合并集合', icon: '🔗' },
+            { id: 'find', name: '查找根', icon: '🔍' },
+            { id: 'connected', name: '连通判断', icon: '✅' }
+        ],
+        segmenttree: [
+            { id: 'query', name: '区间查询', icon: '🔍' },
+            { id: 'update', name: '单点更新', icon: '✏️' },
+            { id: 'build', name: '构建树', icon: '🌲' }
+        ],
+        dp: [
+            { id: 'lcs', name: '最长公共子序列', icon: '📊' },
+            { id: 'knapsack', name: '0-1背包', icon: '🎒' },
+            { id: 'fibonacci', name: '斐波那契', icon: '🔢' }
+        ],
+        kmp: [
+            { id: 'match', name: '模式匹配', icon: '🎯' },
+            { id: 'lps', name: 'LPS构建', icon: '📝' }
         ]
     };
 
@@ -359,6 +393,25 @@ function generateRandomData() {
             break;
         case 'heap':
             viz.fromArray(Utils.randomArray(7, 1, 99));
+            break;
+        case 'trie':
+            const words = ['apple', 'app', 'apply', 'application', 'banana', 'band', 'cat', 'car'];
+            const shuffled = words.sort(() => Math.random() - 0.5);
+            viz.setData(shuffled.slice(0, 5));
+            break;
+        case 'unionfind':
+            viz.setData(6);
+            break;
+        case 'segmenttree':
+            viz.setData(Utils.randomArray(6, 1, 20));
+            break;
+        case 'dp':
+            viz.setData(Utils.randomArray(4, 5, 50), Utils.randomArray(4, 5, 50));
+            break;
+        case 'kmp':
+            const text = 'ABABDABACDABABCABAB';
+            const patterns = ['ABABCABAB', 'ABA', 'DABACDABAB'];
+            viz.setData(text, patterns[Math.floor(Math.random() * patterns.length)]);
             break;
     }
 
@@ -490,6 +543,79 @@ function executeOperation(opId) {
                     break;
                 case 'sort':
                     viz.heapSort();
+                    break;
+            }
+            break;
+
+        case 'trie':
+            const wordInput = elements.dataInput.value.trim() || 'test';
+            switch (opId) {
+                case 'insert':
+                    viz.insert(wordInput);
+                    break;
+                case 'search':
+                    viz.search(wordInput);
+                    break;
+                case 'prefix':
+                    viz.startsWith(wordInput);
+                    break;
+            }
+            break;
+
+        case 'unionfind':
+            const a = inputValue % 6;
+            const b = (inputValue + 3) % 6;
+            switch (opId) {
+                case 'union':
+                    viz.union(a, b);
+                    break;
+                case 'find':
+                    viz.find(a);
+                    break;
+                case 'connected':
+                    viz.connected(a, b);
+                    break;
+            }
+            break;
+
+        case 'segmenttree':
+            const arr = viz.getData();
+            const l = 0;
+            const r = Math.floor(arr.length / 2);
+            switch (opId) {
+                case 'query':
+                    viz.query(l, r);
+                    break;
+                case 'update':
+                    viz.update(2, inputValue);
+                    break;
+                case 'build':
+                    viz.build();
+                    break;
+            }
+            break;
+
+        case 'dp':
+            switch (opId) {
+                case 'lcs':
+                    viz.lcs();
+                    break;
+                case 'knapsack':
+                    viz.knapsack();
+                    break;
+                case 'fibonacci':
+                    viz.fibonacci();
+                    break;
+            }
+            break;
+
+        case 'kmp':
+            switch (opId) {
+                case 'match':
+                    viz.kmpSearch();
+                    break;
+                case 'lps':
+                    viz.computeLPS();
                     break;
             }
             break;

@@ -14,6 +14,8 @@ function setTheme(theme) {
     const btn = document.getElementById('themeToggle');
     if (btn) {
         btn.textContent = theme === 'dark' ? '🌙' : '☀️';
+        btn.style.background = theme === 'dark' ? '#1a1a2e' : '#ffffff';
+        btn.style.borderColor = theme === 'dark' ? '#2d2d4a' : '#e2e8f0';
     }
 }
 

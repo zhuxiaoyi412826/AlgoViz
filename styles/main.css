@@ -243,45 +243,23 @@ h4 { font-size: 1.25rem; }
     border-radius: 50%;
     cursor: pointer;
     transition: all var(--transition-normal);
-    overflow: hidden;
+    font-size: 1.1rem;
 }
 
 .theme-toggle:hover {
     background: var(--bg-card-hover);
     border-color: var(--primary);
-    transform: scale(1.05);
 }
 
-.theme-toggle:active {
-    transform: scale(0.95);
+/* Default (dark mode): show moon */
+.theme-toggle::before {
+    content: "🌙";
 }
 
-.theme-toggle .icon {
-    position: absolute;
-    font-size: 1.1rem;
-    transition: all 0.3s ease;
-}
-
-/* Dark mode: show moon, hide sun */
-[data-theme="dark"] .theme-toggle .icon-sun {
-    opacity: 0;
-    transform: rotate(90deg) scale(0);
-}
-
-[data-theme="dark"] .theme-toggle .icon-moon {
-    opacity: 1;
-    transform: rotate(0deg) scale(1);
-}
-
-/* Light mode: show sun, hide moon */
-[data-theme="light"] .theme-toggle .icon-moon {
-    opacity: 0;
-    transform: rotate(-90deg) scale(0);
-}
-
-[data-theme="light"] .theme-toggle .icon-sun {
-    opacity: 1;
-    transform: rotate(0deg) scale(1);
+/* Light mode: show sun */
+html[data-theme="light"] .theme-toggle::before,
+body[data-theme="light"] .theme-toggle::before {
+    content: "☀️";
 }
 
 .nav-link:hover::after,

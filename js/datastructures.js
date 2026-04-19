@@ -35,6 +35,7 @@ const elements = {
 
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
+    ThemeManager.init();
     initElements();
     initEventListeners();
     initVisualizers();
@@ -58,6 +59,10 @@ function initElements() {
     elements.pseudocodeContent = document.getElementById('pseudocodeContent');
     elements.vizStatus = document.getElementById('vizStatus');
     elements.infoPanel = document.getElementById('infoPanel');
+    elements.fileInput = document.getElementById('fileInput');
+    elements.fileName = document.getElementById('fileName');
+    elements.loadFileBtn = document.getElementById('loadFileBtn');
+    elements.presetBtns = document.querySelectorAll('.preset-btn');
 }
 
 // 初始化事件监听
@@ -73,6 +78,22 @@ function initEventListeners() {
     // 随机数据
     elements.randomBtn.addEventListener('click', generateRandomData);
 
+    // 文件上传
+    if (elements.fileInput) {
+        elements.fileInput.addEventListener('change', handleFileSelect);
+    }
+    if (elements.loadFileBtn) {
+        elements.loadFileBtn.addEventListener('click', loadFromFile);
+    }
+
+    // 预设按钮
+    elements.presetBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const preset = btn.dataset.preset;
+            applyPreset(preset);
+        });
+    });
+
     // 播放控制
     elements.playBtn.addEventListener('click', play);
     elements.pauseBtn.addEventListener('click', pause);
@@ -82,6 +103,75 @@ function initEventListeners() {
 
     // 速度控制
     elements.speedSlider.addEventListener('input', updateSpeed);
+}
+
+// 文件选择处理
+let selectedFileData = null;
+
+function handleFileSelect(e) {
+    const file = e.target.files[0];
+    if (file) {
+        elements.fileName.textContent = file.name;
+        elements.fileName.style.display = 'inline';
+        elements.loadFileBtn.style.display = 'inline-block';
+        
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            selectedFileData = event.target.result;
+        };
+        reader.readAsText(file);
+    }
+}
+
+function loadFromFile() {
+    if (selectedFileData) {
+        const parsed = parseFileData(selectedFileData);
+        if (parsed) {
+            elements.dataInput.value = parsed.join(', ');
+            generateFromInput();
+        }
+    }
+}
+
+function parseFileData(content) {
+    try {
+        // 尝试JSON格式
+        if (content.trim().startsWith('[')) {
+            const arr = JSON.parse(content);
+            if (Array.isArray(arr)) return arr;
+        }
+        // 尝试CSV/普通格式
+        const lines = content.split(/[\n,]+/).map(s => s.trim()).filter(s => s);
+        const nums = lines.map(s => {
+            const n = parseFloat(s);
+            return isNaN(n) ? null : n;
+        });
+        if (nums.every(n => n !== null)) return nums;
+        return null;
+    } catch (e) {
+        return null;
+    }
+}
+
+// 预设数据
+function applyPreset(preset) {
+    let data = [];
+    switch (preset) {
+        case 'random10':
+            data = Array.from({length: 10}, () => Math.floor(Math.random() * 100) + 1);
+            break;
+        case 'random20':
+            data = Array.from({length: 20}, () => Math.floor(Math.random() * 100) + 1);
+            break;
+        case 'nearlySorted':
+            data = [1, 2, 3, 5, 4, 6, 7, 8, 9, 10];
+            break;
+        case 'reversed':
+            data = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+            break;
+    }
+    elements.dataInput.value = data.join(', ');
+    generateFromInput();
 }
 
 // 初始化可视化器

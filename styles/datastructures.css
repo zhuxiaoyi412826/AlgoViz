@@ -48,6 +48,67 @@
     font-size: 2rem;
 }
 
+/* File Upload */
+.file-upload-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--bg-card-hover);
+    border: 1px dashed var(--border);
+    border-radius: var(--radius-md);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    font-size: 0.875rem;
+}
+
+.file-upload-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary-light);
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.file-name {
+    flex: 1;
+    margin-left: 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Input Presets */
+.input-presets {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.preset-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.preset-btn {
+    padding: 0.25rem 0.75rem;
+    background: var(--bg-dark);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all var(--transition-fast);
+}
+
+.preset-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary-light);
+}
+
 .ds-name {
     font-weight: 600;
     font-size: 0.9rem;

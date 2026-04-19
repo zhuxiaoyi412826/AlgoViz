@@ -23,6 +23,12 @@
                 <a href="/pages/datastructures.html" class="nav-link active">数据结构</a>
                 <a href="/pages/algorithms.html" class="nav-link">算法演示</a>
             </div>
+            <div class="nav-actions">
+                <button class="theme-toggle" id="themeToggle" title="切换主题">
+                    <span class="icon-sun">☀️</span>
+                    <span class="icon-moon">🌙</span>
+                </button>
+            </div>
         </div>
     </nav>
 
@@ -108,6 +114,21 @@
                             <div class="control-row">
                                 <input type="text" class="form-input" id="dataInput" placeholder="输入数据 (逗号分隔)" value="23, 45, 12, 67, 34, 89, 56">
                                 <button class="btn btn-secondary" id="randomBtn">随机</button>
+                            </div>
+                            <div class="control-row" style="margin-top: 0.75rem;">
+                                <label class="file-upload-btn">
+                                    <input type="file" id="fileInput" accept=".txt,.json,.csv" hidden>
+                                    <span>📁 上传文件</span>
+                                </label>
+                                <span id="fileName" class="file-name" style="display: none;"></span>
+                                <button class="btn btn-ghost" id="loadFileBtn" style="display: none;">加载</button>
+                            </div>
+                            <div class="input-presets" id="inputPresets">
+                                <span class="preset-label">快速预设:</span>
+                                <button class="preset-btn" data-preset="random10">随机10个</button>
+                                <button class="preset-btn" data-preset="random20">随机20个</button>
+                                <button class="preset-btn" data-preset="nearlySorted">近乎有序</button>
+                                <button class="preset-btn" data-preset="reversed">倒序</button>
                             </div>
                         </div>
                         

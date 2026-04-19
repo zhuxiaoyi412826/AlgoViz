@@ -2,7 +2,34 @@
  * 首页脚本
  */
 
+// 主题管理
+const ThemeManager = {
+    STORAGE_KEY: 'algoviz-theme',
+    
+    init() {
+        const savedTheme = localStorage.getItem(this.STORAGE_KEY) || 'dark';
+        this.setTheme(savedTheme);
+        
+        const toggleBtn = document.getElementById('themeToggle');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => this.toggle());
+        }
+    },
+    
+    setTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem(this.STORAGE_KEY, theme);
+    },
+    
+    toggle() {
+        const current = document.documentElement.getAttribute('data-theme') || 'dark';
+        const next = current === 'dark' ? 'light' : 'dark';
+        this.setTheme(next);
+    }
+};
+
 document.addEventListener('DOMContentLoaded', () => {
+    ThemeManager.init();
     initAnimations();
 });
 

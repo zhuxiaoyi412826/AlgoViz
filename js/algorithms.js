@@ -16,6 +16,7 @@ const elements = {};
 
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
+    ThemeManager.init();
     initElements();
     initEventListeners();
     initVisualizers();
@@ -50,6 +51,10 @@ function initElements() {
     elements.algoTimeWorst = document.getElementById('algoTimeWorst');
     elements.algoSpace = document.getElementById('algoSpace');
     elements.algoCoreIdea = document.getElementById('algoCoreIdea');
+    elements.algoFileInput = document.getElementById('algoFileInput');
+    elements.algoFileName = document.getElementById('algoFileName');
+    elements.algoLoadFileBtn = document.getElementById('algoLoadFileBtn');
+    elements.algoPresetBtns = document.querySelectorAll('#algoInputPresets .preset-btn');
 }
 
 // 初始化事件监听
@@ -72,6 +77,22 @@ function initEventListeners() {
     // 随机数据
     elements.algoRandomBtn.addEventListener('click', generateRandomData);
 
+    // 文件上传
+    if (elements.algoFileInput) {
+        elements.algoFileInput.addEventListener('change', handleAlgoFileSelect);
+    }
+    if (elements.algoLoadFileBtn) {
+        elements.algoLoadFileBtn.addEventListener('click', loadAlgoFromFile);
+    }
+
+    // 预设按钮
+    elements.algoPresetBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const preset = btn.dataset.preset;
+            applyAlgoPreset(preset);
+        });
+    });
+
     // 生成图
     elements.generateGraphBtn?.addEventListener('click', () => {
         if (visualizers.graphTraversal) {
@@ -91,6 +112,83 @@ function initEventListeners() {
 
     // 速度控制
     elements.algoSpeedSlider.addEventListener('input', updateSpeed);
+
+    // 导出GIF
+    const exportBtn = document.getElementById('exportGifBtn');
+    if (exportBtn) {
+        exportBtn.addEventListener('click', exportAnimationGif);
+    }
+}
+
+// 文件选择处理
+let algoSelectedFileData = null;
+
+function handleAlgoFileSelect(e) {
+    const file = e.target.files[0];
+    if (file) {
+        elements.algoFileName.textContent = file.name;
+        elements.algoFileName.style.display = 'inline';
+        elements.algoLoadFileBtn.style.display = 'inline-block';
+        
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            algoSelectedFileData = event.target.result;
+        };
+        reader.readAsText(file);
+    }
+}
+
+function loadAlgoFromFile() {
+    if (algoSelectedFileData) {
+        const parsed = parseAlgoFileData(algoSelectedFileData);
+        if (parsed) {
+            elements.algoDataInput.value = parsed.join(', ');
+            if (visualizers.sorting) {
+                visualizers.sorting.setData(parsed);
+            }
+        }
+    }
+}
+
+function parseAlgoFileData(content) {
+    try {
+        if (content.trim().startsWith('[')) {
+            const arr = JSON.parse(content);
+            if (Array.isArray(arr)) return arr;
+        }
+        const lines = content.split(/[\n,]+/).map(s => s.trim()).filter(s => s);
+        const nums = lines.map(s => {
+            const n = parseFloat(s);
+            return isNaN(n) ? null : n;
+        });
+        if (nums.every(n => n !== null)) return nums;
+        return null;
+    } catch (e) {
+        return null;
+    }
+}
+
+// 预设数据
+function applyAlgoPreset(preset) {
+    let data = [];
+    switch (preset) {
+        case 'random10':
+            data = Array.from({length: 10}, () => Math.floor(Math.random() * 100) + 1);
+            break;
+        case 'random20':
+            data = Array.from({length: 20}, () => Math.floor(Math.random() * 100) + 1);
+            break;
+        case 'nearlySorted':
+            data = [1, 2, 3, 5, 4, 6, 7, 8, 9, 10];
+            break;
+        case 'reversed':
+            data = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1];
+            break;
+    }
+    elements.algoDataInput.value = data.join(', ');
+    if (visualizers.sorting) {
+        visualizers.sorting.setData(data);
+    }
 }
 
 // 初始化可视化器
@@ -398,4 +496,129 @@ function updateStatus(status) {
 function updateControlButtons(isPlaying) {
     elements.algoPlayBtn.disabled = isPlaying;
     elements.algoPauseBtn.disabled = !isPlaying;
+}
+
+// ===================================
+// GIF Export Functionality
+// ===================================
+
+async function exportAnimationGif() {
+    const exportBtn = document.getElementById('exportGifBtn');
+    const canvas = elements.algoVisualizationCanvas;
+    
+    if (!canvas || !animationController) {
+        alert('请先运行一次动画');
+        return;
+    }
+
+    // 禁用按钮
+    exportBtn.disabled = true;
+    exportBtn.innerHTML = '<span>⏳</span> 导出中...';
+
+    // 创建进度模态框
+    const overlay = createExportOverlay();
+    document.body.appendChild(overlay);
+
+    try {
+        const gif = new GIF({
+            workers: 2,
+            quality: 10,
+            width: canvas.offsetWidth,
+            height: canvas.offsetHeight,
+            workerScript: 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js'
+        });
+
+        // 重置到开始
+        animationController.reset();
+        animationController.render();
+
+        // 捕获初始帧
+        await captureFrame(gif, canvas);
+        updateProgress(5, '正在录制...');
+
+        const steps = animationController.getSteps();
+        const totalSteps = steps.length;
+        const frameInterval = Math.max(1, Math.floor(totalSteps / 30)); // 最多30帧
+
+        // 录制每一帧
+        for (let i = 0; i < totalSteps; i++) {
+            animationController.stepForward();
+            animationController.render();
+
+            if (i % frameInterval === 0 || i === totalSteps - 1) {
+                await captureFrame(gif, canvas);
+                const progress = 5 + Math.floor((i / totalSteps) * 85);
+                updateProgress(progress, `录制中 ${i + 1}/${totalSteps}`);
+            }
+        }
+
+        updateProgress(90, '正在生成GIF...');
+
+        // 添加最后一帧
+        await captureFrame(gif, canvas);
+
+        // 生成GIF
+        gif.on('finished', function(blob) {
+            updateProgress(100, '完成!');
+            
+            // 下载
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `algoviz-${currentAlgo}-${Date.now()}.gif`;
+            a.click();
+            URL.revokeObjectURL(url);
+
+            // 移除模态框
+            setTimeout(() => {
+                overlay.remove();
+                exportBtn.disabled = false;
+                exportBtn.innerHTML = '<span>🎬</span> 导出动画';
+            }, 1000);
+        });
+
+        gif.render();
+    } catch (error) {
+        console.error('Export failed:', error);
+        alert('导出失败，请重试');
+        overlay.remove();
+        exportBtn.disabled = false;
+        exportBtn.innerHTML = '<span>🎬</span> 导出动画';
+    }
+}
+
+function createExportOverlay() {
+    const overlay = document.createElement('div');
+    overlay.className = 'export-overlay';
+    overlay.innerHTML = `
+        <div class="export-modal">
+            <h3>导出动画</h3>
+            <div class="export-progress">
+                <div class="export-progress-bar" id="exportProgressBar" style="width: 0%"></div>
+            </div>
+            <div class="export-status" id="exportStatus">准备中...</div>
+        </div>
+    `;
+    return overlay;
+}
+
+function updateProgress(percent, text) {
+    const bar = document.getElementById('exportProgressBar');
+    const status = document.getElementById('exportStatus');
+    if (bar) bar.style.width = percent + '%';
+    if (status) status.textContent = text;
+}
+
+async function captureFrame(gif, element) {
+    try {
+        const canvas = await html2canvas(element, {
+            backgroundColor: getComputedStyle(document.documentElement).getPropertyValue('--bg-card').trim() || '#1a1a2e',
+            scale: 1,
+            logging: false,
+            useCORS: true
+        });
+        gif.addFrame(canvas, { delay: 100, copy: true });
+    } catch (e) {
+        console.error('Frame capture failed:', e);
+    }
 }

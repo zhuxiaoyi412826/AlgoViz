@@ -232,10 +232,6 @@ h4 { font-size: 1.25rem; }
 }
 
 .theme-toggle {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     width: 36px;
     height: 36px;
     background: var(--bg-card);
@@ -243,7 +239,10 @@ h4 { font-size: 1.25rem; }
     border-radius: 50%;
     cursor: pointer;
     transition: all var(--transition-normal);
-    font-size: 1.1rem;
+    font-size: 1rem;
+    line-height: 36px;
+    text-align: center;
+    color: var(--text-primary);
 }
 
 .theme-toggle:hover {
@@ -251,15 +250,20 @@ h4 { font-size: 1.25rem; }
     border-color: var(--primary);
 }
 
-/* Default (dark mode): show moon */
-.theme-toggle::before {
-    content: "🌙";
+.theme-toggle .icon {
+    display: none;
 }
 
-/* Light mode: show sun */
-html[data-theme="light"] .theme-toggle::before,
-body[data-theme="light"] .theme-toggle::before {
-    content: "☀️";
+.theme-toggle .icon-moon {
+    display: inline;
+}
+
+html[data-theme="light"] .theme-toggle .icon-moon {
+    display: none;
+}
+
+html[data-theme="light"] .theme-toggle .icon-sun {
+    display: inline;
 }
 
 .nav-link:hover::after,

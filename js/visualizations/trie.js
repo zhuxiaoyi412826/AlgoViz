@@ -277,4 +277,13 @@ class TrieVisualizer {
     getSteps() {
         return this.steps;
     }
+
+    // 设置数据
+    setData(words) {
+        this.init();
+        words.forEach(word => {
+            this.insert(word);
+        });
+        this.render();
+    }
 }

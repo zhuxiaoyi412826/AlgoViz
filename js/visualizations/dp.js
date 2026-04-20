@@ -254,4 +254,11 @@ class DPVisualizer {
     getSteps() {
         return this.steps;
     }
+
+    // 设置数据
+    setData(values, weights) {
+        this.init();
+        this.lcs('ABCBDAB', 'BDCABA');
+        this.render();
+    }
 }

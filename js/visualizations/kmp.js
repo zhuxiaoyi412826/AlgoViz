@@ -258,4 +258,11 @@ class KMPVisualizer {
     getSteps() {
         return this.steps;
     }
+
+    // 设置数据
+    setData(text, pattern) {
+        this.init();
+        this.match(text || 'ABABDABACDABABCABAB', pattern || 'ABABCABAB');
+        this.render();
+    }
 }

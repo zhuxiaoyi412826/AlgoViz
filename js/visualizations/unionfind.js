@@ -320,4 +320,12 @@ class UnionFindVisualizer {
     getSteps() {
         return this.steps;
     }
+
+    // 设置数据
+    setData(size) {
+        this.init();
+        const elements = Array.from({length: size}, (_, i) => i);
+        this.makeSet(elements);
+        this.render();
+    }
 }

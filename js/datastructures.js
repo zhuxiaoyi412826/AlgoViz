@@ -35,11 +35,11 @@ const elements = {
 
 // 初始化
 document.addEventListener('DOMContentLoaded', () => {
-    initTheme();
     initElements();
     initEventListeners();
     initVisualizers();
-    selectDataStructure('array');
+    // 不默认选择任何数据结构
+    // selectDataStructure('array');
 });
 
 // 初始化DOM元素
@@ -184,11 +184,9 @@ function initVisualizers() {
     visualizers.hash = new HashTableVisualizer('visualizationCanvas');
     visualizers.graph = new GraphVisualizer('visualizationCanvas');
     visualizers.heap = new HeapVisualizer('visualizationCanvas');
-    visualizers.trie = new TrieVisualizer('visualizationCanvas');
-    visualizers.unionfind = new UnionFindVisualizer('visualizationCanvas');
-    visualizers.segmenttree = new SegmentTreeVisualizer('visualizationCanvas');
-    visualizers.dp = new DPVisualizer('visualizationCanvas');
-    visualizers.kmp = new KMPVisualizer('visualizationCanvas');
+    
+    // 暂时不初始化 trie、unionfind、segmenttree、dp、kmp 等可视化器
+    // 只保留核心数据结构
 
     // 设置默认数据
     visualizers.array.setData([23, 45, 12, 67, 34, 89, 56]);
@@ -199,15 +197,30 @@ function initVisualizers() {
     visualizers.hash.setData([[10, 'A'], [25, 'B'], [35, 'C'], [50, 'D']]);
     visualizers.graph.generateRandom(6, 0.4);
     visualizers.heap.fromArray([15, 10, 20, 8, 25, 30, 12]);
-    visualizers.trie.setData(['apple', 'app', 'application', 'apply', 'banana', 'band']);
-    visualizers.unionfind.setData(6);
-    visualizers.segmenttree.setData([1, 3, 5, 7, 9, 11]);
-    visualizers.dp.setData([10, 30, 20, 50], [15, 20, 30, 40]);
-    visualizers.kmp.setData('ABABDABACDABABCABAB', 'ABABCABAB');
 }
 
 // 选择数据结构
 function selectDataStructure(ds) {
+    // 数据结构页面映射
+    const pageMap = {
+        array: '/html/DS/arr/index.html',
+        linkedlist: '/html/DS/linkedlist/index.html',
+        stack: '/html/DS/stack/index.html',
+        queue: '/html/DS/queue/index.html',
+        tree: '/html/DS/tree/index.html',
+        hash: '/html/DS/hash/index.html',
+        graph: '/html/DS/graph/index.html',
+        heap: '/html/DS/heap/index.html'
+    };
+    
+    // 检查是否有对应的独立页面
+    if (pageMap[ds]) {
+        // 跳转到独立页面
+        window.location.href = pageMap[ds];
+        return;
+    }
+    
+    // 对于没有独立页面的数据结构，保持原有的页面内可视化功能
     // 更新按钮状态
     elements.dsButtons.forEach(btn => {
         btn.classList.toggle('active', btn.dataset.ds === ds);
@@ -275,10 +288,10 @@ function updateOperationButtons(ds) {
 function getOperations(ds) {
     const operations = {
         array: [
-            { id: 'access', name: '访问', icon: '👁️' },
-            { id: 'search', name: '查找', icon: '🔍' },
-            { id: 'insert', name: '插入', icon: '➕' },
-            { id: 'delete', name: '删除', icon: '➖' }
+            { id: 'search', name: '查询', icon: '🔍' },
+            { id: 'insert', name: '增加', icon: '➕' },
+            { id: 'delete', name: '删除', icon: '➖' },
+            { id: 'expand', name: '扩容', icon: '📏' }
         ],
         linkedlist: [
             { id: 'traverse', name: '遍历', icon: '🚶' },
@@ -429,9 +442,6 @@ function executeOperation(opId) {
     switch (currentDS) {
         case 'array':
             switch (opId) {
-                case 'access':
-                    viz.search(inputValue);
-                    break;
                 case 'search':
                     viz.search(inputValue);
                     break;
@@ -440,6 +450,15 @@ function executeOperation(opId) {
                     break;
                 case 'delete':
                     viz.delete(viz.getData().length - 1);
+                    break;
+                case 'expand':
+                    // 扩容操作：将数组容量翻倍
+                    const currentLength = viz.getData().length;
+                    const expandedArray = [...viz.getData()];
+                    for (let i = 0; i < currentLength; i++) {
+                        expandedArray.push(0);
+                    }
+                    viz.setData(expandedArray);
                     break;
             }
             break;

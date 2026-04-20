@@ -309,4 +309,11 @@ class SegmentTreeVisualizer {
     getSteps() {
         return this.steps;
     }
+
+    // 设置数据
+    setData(arr) {
+        this.init();
+        this.buildFromArray(arr);
+        this.render();
+    }
 }

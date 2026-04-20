@@ -195,11 +195,6 @@ const ALGO_INFO = {
 // 伪代码模板
 const PSEUDOCODES = {
     array: [
-        'function access(arr, index):',
-        '    if index < 0 or index >= length(arr):',
-        '        return "Index out of bounds"',
-        '    return arr[index]  // O(1) random access',
-        '',
         'function search(arr, target):',
         '    for i from 0 to length(arr) - 1:',
         '        if arr[i] == target:',
@@ -209,7 +204,21 @@ const PSEUDOCODES = {
         'function insert(arr, index, value):',
         '    for i from length(arr) - 1 down to index:',
         '        arr[i + 1] = arr[i]  // Shift elements',
-        '    arr[index] = value  // O(n) time complexity'
+        '    arr[index] = value  // O(n) time complexity',
+        '',
+        'function delete(arr, index):',
+        '    if index < 0 or index >= length(arr):',
+        '        return "Index out of bounds"',
+        '    for i from index to length(arr) - 2:',
+        '        arr[i] = arr[i + 1]  // Shift elements',
+        '    arr.pop()  // Remove last element',
+        '',
+        'function expand(arr):',
+        '    newCapacity = length(arr) * 2',
+        '    newArray = new Array(newCapacity)',
+        '    for i from 0 to length(arr) - 1:',
+        '        newArray[i] = arr[i]',
+        '    return newArray  // Double capacity'
     ],
     linkedlist: [
         'class Node:',

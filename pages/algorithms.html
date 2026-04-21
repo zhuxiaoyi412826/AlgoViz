@@ -30,6 +30,7 @@
                 <a href="/index.html" class="nav-link">首页</a>
                 <a href="/pages/datastructures.html" class="nav-link">数据结构</a>
                 <a href="/pages/algorithms.html" class="nav-link active">算法演示</a>
+                <a href="/pages/products.html" class="nav-link">商品</a>
             </div>
             <div class="nav-actions">
                 <button id="themeToggle" style="width:38px;height:38px;border-radius:50%;border:1px solid #2d2d4a;background:#1a1a2e;cursor:pointer;font-size:18px;">🌙</button>
@@ -37,6 +38,139 @@
         </div>
     </nav>
 
+    <style>
+        /* 导航栏下拉菜单样式 */
+        .nav-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .nav-dropdown-btn {
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-weight: 500;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+        
+        .nav-dropdown-btn:hover {
+            color: var(--primary);
+        }
+        
+        .nav-dropdown-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            min-width: 120px;
+            z-index: 1000;
+            display: none;
+        }
+        
+        .nav-dropdown:hover .nav-dropdown-menu {
+            display: block;
+        }
+        
+        .nav-dropdown-item {
+            display: block;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+        }
+        
+        .nav-dropdown-item:hover {
+            background-color: var(--hover-bg);
+        }
+        
+        /* 支付模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .payment-option {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .payment-option:hover {
+            border-color: var(--primary);
+            background-color: rgba(102, 126, 234, 0.05);
+        }
+        
+        .payment-icon {
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+        
+        .payment-info h4 {
+            margin: 0 0 0.25rem 0;
+            color: var(--text-primary);
+        }
+        
+        .payment-info p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+    </style>
+    
     <script>
     (function() {
         function setTheme(theme) {
@@ -68,8 +202,62 @@
         }
     })();
     </script>
+    
+    <!-- 支付模态框 -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">选择支付方式</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="payment-options">
+                <div class="payment-option" onclick="selectPayment('wechat')">
+                    <div class="payment-icon">💳</div>
+                    <div class="payment-info">
+                        <h4>微信支付</h4>
+                        <p>扫码支付</p>
+                    </div>
+                </div>
+                <div class="payment-option" onclick="selectPayment('alipay')">
+                    <div class="payment-icon">💳</div>
+                    <div class="payment-info">
+                        <h4>支付宝</h4>
+                        <p>扫码支付</p>
+                    </div>
+                </div>
+            </div>
         </div>
-    </nav>
+    </div>
+    
+    <script>
+        // 打开支付模态框
+        function openPaymentModal(product) {
+            document.getElementById('paymentModal').style.display = 'flex';
+        }
+        
+        // 关闭支付模态框
+        function closeModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+        }
+        
+        // 选择支付方式
+        function selectPayment(method) {
+            alert(`选择了${method === 'wechat' ? '微信' : '支付宝'}支付，功能正在开发中...`);
+            closeModal();
+        }
+        
+        // 为商品项添加点击事件
+        document.addEventListener('DOMContentLoaded', function() {
+            const productItems = document.querySelectorAll('.nav-dropdown-item');
+            productItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const product = this.dataset.product;
+                    openPaymentModal(product);
+                });
+            });
+        });
+    </script>
 
     <!-- Main Content -->
     <main class="main">

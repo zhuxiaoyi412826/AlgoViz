@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>商品 - AlgoViz</title>
+    <link rel="stylesheet" href="/styles/main.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+    <style>
+        /* 商品页面样式 */
+        .products-section {
+            padding: 4rem 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        
+        .section-title h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .section-title p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        
+        .category-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+        
+        .category-tab {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid var(--border);
+            border-radius: 25px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 500;
+        }
+        
+        .category-tab:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .category-tab.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .product-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .product-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        
+        .product-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        
+        .product-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .product-price {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .product-button {
+            display: block;
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .product-button:hover {
+            background: var(--secondary);
+        }
+        
+        /* 支付模态框样式 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 2rem;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        
+        .payment-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .payment-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .payment-option:hover {
+            border-color: var(--primary);
+            background-color: rgba(102, 126, 234, 0.05);
+        }
+        
+        .payment-icon {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .payment-qr {
+            width: 150px;
+            height: 150px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 1rem 0;
+            border-radius: 8px;
+        }
+        
+        .payment-info h4 {
+            margin: 0 0 0.25rem 0;
+            color: var(--text-primary);
+        }
+        
+        .payment-info p {
+            margin: 0;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/index.html" class="nav-logo">
+                <span class="nav-logo-icon">📊</span>
+                <span class="text-gradient">AlgoViz</span>
+            </a>
+            <div class="nav-links">
+                <a href="/index.html" class="nav-link">首页</a>
+                <a href="/pages/datastructures.html" class="nav-link">数据结构</a>
+                <a href="/pages/algorithms.html" class="nav-link">算法演示</a>
+                <a href="/pages/products.html" class="nav-link active">商品</a>
+            </div>
+            <div class="nav-actions">
+                <button id="themeToggle" style="width:38px;height:38px;border-radius:50%;border:1px solid #2d2d4a;background:#1a1a2e;cursor:pointer;font-size:18px;">🌙</button>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+    (function() {
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('algoviz-theme', theme);
+            var btn = document.getElementById('themeToggle');
+            if (btn) {
+                btn.textContent = theme === 'dark' ? '🌙' : '☀️';
+                btn.style.background = theme === 'dark' ? '#1a1a2e' : '#ffffff';
+                btn.style.borderColor = theme === 'dark' ? '#2d2d4a' : '#e2e8f0';
+            }
+            document.body.style.background = theme === 'dark' ? '#0f0f23' : '#f5f7fa';
+        }
+        
+        function toggleTheme() {
+            var current = document.documentElement.getAttribute('data-theme') || 'dark';
+            var next = current === 'dark' ? 'light' : 'dark';
+            setTheme(next);
+        }
+        
+        window.toggleTheme = toggleTheme;
+        
+        var saved = localStorage.getItem('algoviz-theme') || 'dark';
+        setTheme(saved);
+        
+        var btn = document.getElementById('themeToggle');
+        if (btn) {
+            btn.addEventListener('click', toggleTheme);
+        }
+    })();
+    </script>
+
+    <!-- Main Content -->
+    <main class="main">
+        <!-- Products Section -->
+        <section class="products-section">
+            <div class="container">
+                <div class="section-title">
+                    <h2>商品中心</h2>
+                    <p>选择适合你的学习资料和项目</p>
+                </div>
+                
+                <!-- Category Tabs -->
+                <div class="category-tabs">
+                    <div class="category-tab active" data-category="all">全部</div>
+                    <div class="category-tab" data-category="notes">笔记</div>
+                    <div class="category-tab" data-category="tutorial">教程</div>
+                    <div class="category-tab" data-category="project">项目</div>
+                </div>
+                
+                <!-- Products Grid -->
+                <div class="products-grid" id="productsGrid">
+                    <!-- 笔记类商品 -->
+                    <div class="product-card" data-category="notes" data-product="notes-basic">
+                        <div class="product-icon">📝</div>
+                        <h3 class="product-title">算法基础笔记</h3>
+                        <p class="product-description">包含常见数据结构和算法的详细笔记，适合初学者</p>
+                        <div class="product-price">¥29.9</div>
+                        <button class="product-button" onclick="openPaymentModal('notes-basic')">购买</button>
+                    </div>
+                    
+                    <div class="product-card" data-category="notes" data-product="notes-advanced">
+                        <div class="product-icon">📚</div>
+                        <h3 class="product-title">高级算法笔记</h3>
+                        <p class="product-description">包含高级算法和复杂数据结构的深入解析</p>
+                        <div class="product-price">¥49.9</div>
+                        <button class="product-button" onclick="openPaymentModal('notes-advanced')">购买</button>
+                    </div>
+                    
+                    <!-- 教程类商品 -->
+                    <div class="product-card" data-category="tutorial" data-product="tutorial-basic">
+                        <div class="product-icon">🎓</div>
+                        <h3 class="product-title">算法入门教程</h3>
+                        <p class="product-description">零基础入门算法，包含视频讲解和实战练习</p>
+                        <div class="product-price">¥99.9</div>
+                        <button class="product-button" onclick="openPaymentModal('tutorial-basic')">购买</button>
+                    </div>
+                    
+                    <div class="product-card" data-category="tutorial" data-product="tutorial-advanced">
+                        <div class="product-icon">🚀</div>
+                        <h3 class="product-title">算法进阶教程</h3>
+                        <p class="product-description">针对面试和竞赛的高级算法教程</p>
+                        <div class="product-price">¥149.9</div>
+                        <button class="product-button" onclick="openPaymentModal('tutorial-advanced')">购买</button>
+                    </div>
+                    
+                    <!-- 项目类商品 -->
+                    <div class="product-card" data-category="project" data-product="project-basic">
+                        <div class="product-icon">💻</div>
+                        <h3 class="product-title">算法可视化项目</h3>
+                        <p class="product-description">基于AlgoViz的算法可视化项目源码</p>
+                        <div class="product-price">¥199.9</div>
+                        <button class="product-button" onclick="openPaymentModal('project-basic')">购买</button>
+                    </div>
+                    
+                    <div class="product-card" data-category="project" data-product="project-advanced">
+                        <div class="product-icon">🌟</div>
+                        <h3 class="product-title">AI辅助算法项目</h3>
+                        <p class="product-description">结合AI技术的智能算法分析系统</p>
+                        <div class="product-price">¥299.9</div>
+                        <button class="product-button" onclick="openPaymentModal('project-advanced')">购买</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 支付模态框 -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">选择支付方式</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="payment-options">
+                <div class="payment-option" onclick="selectPayment('wechat')">
+                    <div class="payment-icon">💳</div>
+                    <div class="payment-info">
+                        <h4>微信支付</h4>
+                        <p>扫码支付</p>
+                    </div>
+                    <div class="payment-qr">
+                        <canvas id="wechatQR"></canvas>
+                    </div>
+                </div>
+                <div class="payment-option" onclick="selectPayment('alipay')">
+                    <div class="payment-icon">💳</div>
+                    <div class="payment-info">
+                        <h4>支付宝</h4>
+                        <p>扫码支付</p>
+                    </div>
+                    <div class="payment-qr">
+                        <canvas id="alipayQR"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 打开支付模态框
+        function openPaymentModal(product) {
+            document.getElementById('paymentModal').style.display = 'flex';
+            
+            // 生成微信支付二维码
+            QRCode.toCanvas(document.getElementById('wechatQR'), 'wechat://pay?product=' + product, {
+                width: 150,
+                margin: 1
+            }, function (error) {
+                if (error) console.error(error);
+            });
+            
+            // 生成支付宝支付二维码
+            QRCode.toCanvas(document.getElementById('alipayQR'), 'alipay://pay?product=' + product, {
+                width: 150,
+                margin: 1
+            }, function (error) {
+                if (error) console.error(error);
+            });
+        }
+        
+        // 关闭支付模态框
+        function closeModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+        }
+        
+        // 选择支付方式
+        function selectPayment(method) {
+            alert(`选择了${method === 'wechat' ? '微信' : '支付宝'}支付，功能正在开发中...`);
+            closeModal();
+        }
+        
+        // 分类切换功能
+        document.addEventListener('DOMContentLoaded', function() {
+            const categoryTabs = document.querySelectorAll('.category-tab');
+            const productCards = document.querySelectorAll('.product-card');
+            
+            categoryTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    // 更新标签状态
+                    categoryTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // 筛选商品
+                    const category = this.dataset.category;
+                    productCards.forEach(card => {
+                        if (category === 'all' || card.dataset.category === category) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+</body>
+</html>

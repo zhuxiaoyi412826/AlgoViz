@@ -204,7 +204,7 @@ function selectDataStructure(ds) {
     // 数据结构页面映射
     const pageMap = {
         array: '/html/DS/arr/index.html',
-        linkedlist: '/html/DS/linkedlist/index.html',
+        linkedlist: '/html/DS/linklist/index.html',
         stack: '/html/DS/stack/index.html',
         queue: '/html/DS/queue/index.html',
         tree: '/html/DS/tree/index.html',

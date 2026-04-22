@@ -8,6 +8,25 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        /* 个人中心头像样式 */
+        .nav-avatar {
+            font-size: 1rem;
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            text-align: center;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            transition: all 0.2s ease;
+        }
+        
+        .nav-avatar:hover {
+            transform: scale(1.1);
+        }
+    </style>
 </head>
 <body onload="initTheme()">
     <!-- Navigation -->
@@ -22,6 +41,9 @@
                 <a href="/pages/datastructures.html" class="nav-link">数据结构</a>
                 <a href="/pages/algorithms.html" class="nav-link">算法演示</a>
                 <a href="/pages/products.html" class="nav-link">商品</a>
+                <a href="/pages/profile.html" class="nav-link">
+                    <span class="nav-avatar">👤</span>
+                </a>
             </div>
             <div class="nav-actions">
                 <button id="themeToggle" style="width:38px;height:38px;border-radius:50%;border:1px solid #2d2d4a;background:#1a1a2e;cursor:pointer;font-size:18px;">🌙</button>

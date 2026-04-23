@@ -121,6 +121,16 @@
             transform: scale(1.1);
         }
         
+        .visit-counter {
+            margin-right: 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--hover-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
         .nav-actions {
             display: flex;
             align-items: center;
@@ -478,6 +488,7 @@
                 </a>
             </div>
             <div class="nav-actions">
+                <div class="visit-counter">访问量: <span id="visitCount">0</span></div>
                 <button id="themeToggle" style="width:38px;height:38px;border-radius:50%;border:1px solid #2d2d4a;background:#1a1a2e;cursor:pointer;font-size:18px;">🌙</button>
             </div>
         </div>

@@ -317,6 +317,21 @@
             font-size: 1.1rem;
             font-weight: 600;
         }
+        
+        .logout-btn {
+            padding: 0.75rem 1.5rem;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        
+        .logout-btn:hover {
+            background: #dc2626;
+        }
     </style>
 </head>
 <body onload="initTheme()">
@@ -374,7 +389,23 @@
             }
         }
         
+        // 检查登录状态
+        function checkLoginStatus() {
+            var isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (!isLoggedIn) {
+                window.location.href = '/pages/login.html';
+            }
+        }
+        
+        // 退出登录
+        function logout() {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('userAvatar');
+            window.location.href = '/index.html';
+        }
+        
         window.toggleTheme = toggleTheme;
+        window.logout = logout;
         
         var saved = localStorage.getItem('algoviz-theme') || 'dark';
         setTheme(saved);
@@ -383,6 +414,9 @@
         if (btn) {
             btn.addEventListener('click', toggleTheme);
         }
+        
+        // 检查登录状态
+        checkLoginStatus();
         
         // 更新访问量显示
         updateVisitCount();
@@ -498,6 +532,9 @@
                                     <div class="profile-info-item">
                                         <span class="profile-info-label">最后登录：</span>
                                         <span class="profile-info-value">2024-04-21</span>
+                                    </div>
+                                    <div class="profile-info-item">
+                                        <button class="logout-btn" onclick="logout()">退出登录</button>
                                     </div>
                                 </div>
                             </div>

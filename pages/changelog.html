@@ -436,8 +436,8 @@
                 <a href="/pages/products.html" class="nav-link">商品</a>
                 <a href="/pages/changelog.html" class="nav-link active">更新日志</a>
                 <a href="/pages/suggestion.html" class="nav-link">建议我</a>
-                <a href="/pages/profile.html" class="nav-link">
-                    <span class="nav-avatar">👤</span>
+                <a href="javascript:void(0)" class="nav-link" id="profileLink">
+                    <span class="nav-avatar" id="navAvatar">👤</span>
                 </a>
             </div>
             <div class="nav-actions">
@@ -476,6 +476,22 @@
             }
         }
         
+        // 检查登录状态并更新头像
+        function checkLoginStatus() {
+            var isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            var navAvatar = document.getElementById('navAvatar');
+            var profileLink = document.getElementById('profileLink');
+            
+            if (isLoggedIn) {
+                var userAvatar = localStorage.getItem('userAvatar') || '👤';
+                navAvatar.textContent = userAvatar;
+                profileLink.href = '/pages/profile.html';
+            } else {
+                navAvatar.textContent = '👨';
+                profileLink.href = '/pages/login.html';
+            }
+        }
+        
         window.toggleTheme = toggleTheme;
         
         var saved = localStorage.getItem('algoviz-theme') || 'dark';
@@ -485,6 +501,9 @@
         if (btn) {
             btn.addEventListener('click', toggleTheme);
         }
+        
+        // 检查登录状态
+        checkLoginStatus();
         
         // 更新访问量显示
         updateVisitCount();

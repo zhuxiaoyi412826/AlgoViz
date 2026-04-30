@@ -52,9 +52,8 @@
                 <a href="/index.html" class="nav-link">首页</a>
                 <a href="/pages/datastructures.html" class="nav-link active">数据结构</a>
                 <a href="/pages/algorithms.html" class="nav-link">算法演示</a>
+                <a href="/pages/oj.html" class="nav-link">在线OJ</a>
                 <a href="/pages/products.html" class="nav-link">商品</a>
-                <a href="/pages/changelog.html" class="nav-link">更新日志</a>
-                <a href="/pages/suggestion.html" class="nav-link">建议我</a>
                 <a href="javascript:void(0)" class="nav-link" id="profileLink">
                     <span class="nav-avatar" id="navAvatar">👤</span>
                 </a>
@@ -177,126 +176,28 @@
                         <span class="ds-name">堆</span>
                     </button>
                 </div>
-            </div>
-
-            <!-- Main Layout: Info + Visualization -->
-            <div class="main-layout">
-                <!-- Left Column: Controls + Info -->
-                <div class="left-column">
-                    <!-- Info Panel -->
-                    <div class="info-panel" id="infoPanel">
-                        <h3 class="panel-title">
-                            <span id="dsTitle">数组 Array</span>
-                        </h3>
-                        <div class="info-item">
-                            <span class="info-label">简介</span>
-                            <span class="info-value" id="dsDescription">数组是最基本的数据结构，用一段连续的内存空间存储相同类型的数据元素。</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">时间复杂度</span>
-                            <div class="info-value">
-                                <span class="complexity-badge">访问 O(1)</span>
-                                <span class="complexity-badge">查找 O(n)</span>
-                                <span class="complexity-badge">插入 O(n)</span>
-                            </div>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">空间复杂度</span>
-                            <div class="info-value">
-                                <span class="complexity-badge">O(n)</span>
-                            </div>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-label">核心特点</span>
-                            <span class="info-value" id="dsFeatures">- 连续内存空间<br>- 支持随机访问<br>- 插入删除效率低</span>
-                        </div>
-                    </div>
-
-                    <!-- Control Panel -->
-                    <div class="control-panel" id="controlPanel">
-                        <div class="control-section">
-                            <div class="control-section-title">数据输入</div>
-                            <div class="control-row">
-                                <input type="text" class="form-input" id="dataInput" placeholder="输入数据 (逗号分隔)" value="23, 45, 12, 67, 34, 89, 56">
-                                <button class="btn btn-secondary" id="randomBtn">随机</button>
-                            </div>
-                            <div class="control-row" style="margin-top: 0.75rem;">
-                                <label class="file-upload-btn">
-                                    <input type="file" id="fileInput" accept=".txt,.json,.csv" hidden>
-                                    <span>📁 上传文件</span>
-                                </label>
-                                <span id="fileName" class="file-name" style="display: none;"></span>
-                                <button class="btn btn-ghost" id="loadFileBtn" style="display: none;">加载</button>
-                            </div>
-                            <div class="input-presets" id="inputPresets">
-                                <span class="preset-label">快速预设:</span>
-                                <button class="preset-btn" data-preset="random10">随机10个</button>
-                                <button class="preset-btn" data-preset="random20">随机20个</button>
-                                <button class="preset-btn" data-preset="nearlySorted">近乎有序</button>
-                                <button class="preset-btn" data-preset="reversed">倒序</button>
-                            </div>
-                        </div>
-                        
-                        <div class="control-section">
-                            <div class="control-section-title">操作</div>
-                            <div class="control-row" id="operationButtons">
-                                <!-- Dynamic operation buttons will be inserted here -->
-                            </div>
-                        </div>
-
-                        <div class="control-section">
-                            <div class="control-section-title">动画控制</div>
-                            <div class="control-row">
-                                <div class="control-btn-group">
-                                    <button class="control-btn" id="playBtn" title="播放">
-                                        ▶
-                                    </button>
-                                    <button class="control-btn" id="pauseBtn" title="暂停" disabled>
-                                        ⏸
-                                    </button>
-                                    <button class="control-btn" id="stepBackBtn" title="上一步">
-                                        ⏮
-                                    </button>
-                                    <button class="control-btn" id="stepForwardBtn" title="下一步">
-                                        ⏭
-                                    </button>
-                                    <button class="control-btn" id="resetBtn" title="重置">
-                                        ↻
-                                    </button>
-                                </div>
-                            </div>
-                            <div class="control-row" style="margin-top: 1rem;">
-                                <label class="form-label" style="min-width: auto; margin-right: 1rem;">速度</label>
-                                <input type="range" class="form-range" id="speedSlider" min="100" max="2000" value="500">
-                                <span id="speedValue" style="margin-left: 0.5rem; font-size: 0.9rem;">0.5x</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Right Column: Visualization + Pseudocode -->
-                <div class="right-column">
-                    <!-- Visualization Area -->
-                    <div class="visualization-container">
-                        <div class="viz-header">
-                            <h3 id="vizTitle">数组可视化</h3>
-                            <span id="vizStatus" class="viz-status">就绪</span>
-                        </div>
-                        <div class="visualization-canvas" id="visualizationCanvas">
-                            <!-- Dynamic visualization content -->
-                        </div>
-                    </div>
-
-                    <!-- Pseudocode Panel -->
-                    <div class="pseudocode-panel" id="pseudocodePanel">
-                        <div class="control-section-title">伪代码</div>
-                        <div id="pseudocodeContent">
-                            <!-- Dynamic pseudocode will be inserted here -->
-                        </div>
-                    </div>
+            </div>    
+        </div>
+    
+    
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-slogan">AlgoViz - 数据结构与算法可视化学习平台 · 让学习变得更有趣</div>
+                <div class="footer-bottom-row">
+                    <span>AlgoViz © 2026</span>
+                    <span class="footer-divider">|</span>
+                    <span class="footer-icp">ICP备案：<a href="https://beian.miit.gov.cn/" target="_blank">豫ICP备12345678号</a></span>
+                    <span class="footer-divider">|</span>
+                    <a href="/pages/changelog.html" class="footer-link">更新日志</a>
+                    <span class="footer-divider">|</span>
+                    <a href="/pages/suggestion.html" class="footer-link">建议我</a>
                 </div>
             </div>
         </div>
+    </footer>
     </main>
 
     <script src="/js/visualizations/base.js"></script>

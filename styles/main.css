@@ -752,6 +752,71 @@ html[data-theme="dark"] .theme-icon {
 }
 
 /* ===================================
+   Footer
+   =================================== */
+
+.footer {
+    padding: 1.5rem 0;
+    border-top: 1px solid var(--border);
+    background: var(--bg-card);
+    text-align: center;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-sm);
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+.footer-slogan {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-xs);
+}
+
+.footer-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+}
+
+.footer-link {
+    color: var(--primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.footer-link:hover {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
+.footer-icp {
+    color: var(--text-muted);
+}
+
+.footer-icp a {
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.footer-icp a:hover {
+    color: var(--primary);
+}
+
+.footer-divider {
+    color: var(--border);
+    margin: 0 var(--spacing-xs);
+}
+
+/* ===================================
    Scrollbar
    =================================== */
 

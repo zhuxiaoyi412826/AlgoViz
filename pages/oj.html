@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>在线OJ - AlgoViz</title>
+    <link rel="stylesheet" href="/styles/main.css">
+    <link rel="stylesheet" href="/styles/oj.css">
+    <script src="/js/main.js"></script>
+    <!-- CodeMirror CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/monokai.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        /* 个人中心头像样式 */
+        .nav-avatar {
+            font-size: 1rem;
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            text-align: center;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            transition: all 0.2s ease;
+        }
+
+        .nav-avatar:hover {
+            transform: scale(1.1);
+        }
+
+        .visit-counter {
+            margin-right: 1rem;
+            padding: 0.5rem 1rem;
+            background: var(--hover-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+    </style>
+</head>
+
+<body onload="initTheme()">
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/index.html" class="nav-logo">
+                <span class="nav-logo-icon">📊</span>
+                <span class="text-gradient">AlgoViz</span>
+            </a>
+            <div class="nav-links">
+                <a href="/index.html" class="nav-link">首页</a>
+                <a href="/pages/datastructures.html" class="nav-link">数据结构</a>
+                <a href="/pages/algorithms.html" class="nav-link">算法演示</a>
+                <a href="/pages/oj.html" class="nav-link active">在线OJ</a>
+                <a href="/pages/products.html" class="nav-link">商品</a>
+                <a href="javascript:void(0)" class="nav-link" id="profileLink">
+                    <span class="nav-avatar" id="navAvatar">👤</span>
+                </a>
+                <a href="/pages/ai.html" class="nav-link ai-link">
+                    <span>✨</span> AI助手
+                </a>
+            </div>
+            <div class="nav-actions">
+                <div class="visit-counter">访问量: <span id="visitCount">0</span></div>
+                <button id="themeToggle" class="theme-switch" aria-label="切换主题">
+                    <div class="theme-switch-handle">
+                        <span class="theme-icon">☀️</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <script>
+        (function () {
+            function setTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('algoviz-theme', theme);
+                var btn = document.getElementById('themeToggle');
+                if (btn) {
+                    var icon = btn.querySelector('.theme-icon');
+                if (icon) {
+                    icon.textContent = theme === 'dark' ? '🌙' : '☀️';
+                }
+                }
+                document.body.style.background = theme === 'dark' ? '#0f0f23' : '#f5f7fa';
+            }
+
+            function toggleTheme() {
+                var current = document.documentElement.getAttribute('data-theme') || 'light';
+                var next = current === 'dark' ? 'light' : 'dark';
+                setTheme(next);
+            }
+
+            // 访问量计数
+            function updateVisitCount() {
+                var count = localStorage.getItem('visitCount') || 0;
+                var visitCountElement = document.getElementById('visitCount');
+                if (visitCountElement) {
+                    visitCountElement.textContent = count;
+                }
+            }
+
+            // 检查登录状态并更新头像
+            function checkLoginStatus() {
+                var isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+                var navAvatar = document.getElementById('navAvatar');
+                var profileLink = document.getElementById('profileLink');
+
+                if (isLoggedIn) {
+                    var userAvatar = localStorage.getItem('userAvatar') || '👤';
+                    navAvatar.textContent = userAvatar;
+                    profileLink.href = '/pages/profile.html';
+                } else {
+                    navAvatar.textContent = '👨';
+                    profileLink.href = '/pages/login.html';
+                }
+            }
+
+            window.toggleTheme = toggleTheme;
+
+            var saved = localStorage.getItem('algoviz-theme') || 'light';
+            setTheme(saved);
+
+            var btn = document.getElementById('themeToggle');
+            if (btn) {
+                btn.addEventListener('click', toggleTheme);
+            }
+
+            // 检查登录状态
+            checkLoginStatus();
+
+            // 更新访问量显示
+            updateVisitCount();
+        })();
+    </script>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container" style="padding-top: 2rem; padding-bottom: 2rem;">
+
+            <!-- OJ Mode -->
+            <div class="oj-mode" id="ojMode">
+                <!-- OJ Main Layout -->
+                <div class="oj-main-layout">
+                    <!-- Left: Problem List + Description -->
+                    <div class="oj-left-column">
+                        <!-- Problem List -->
+                        <div class="oj-problem-list" id="ojProblemList">
+                            <div class="oj-panel-header">
+                                <h3>题目列表</h3>
+                            </div>
+                            <div class="oj-problems">
+                                <!-- Problem items will be rendered here -->
+                            </div>
+                        </div>
+
+                        <!-- Problem Description -->
+                        <div class="oj-problem-desc" id="ojProblemDesc">
+                            <div class="oj-panel-header">
+                                <h3 id="ojProblemTitle">请选择题目</h3>
+                                <span class="oj-problem-difficulty" id="ojProblemDifficulty"></span>
+                            </div>
+                            <div class="oj-problem-content" id="ojProblemContent">
+                                <p class="oj-placeholder">从左侧选择一个题目开始 coding</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right: Editor + Result -->
+                    <div class="oj-right-column">
+                        <!-- Editor Header -->
+                        <div class="oj-editor-header">
+                            <div class="oj-lang-selector">
+                                <label>语言:</label>
+                                <select id="ojLangSelect" class="form-select">
+                                    <option value="java" selected>Java</option>
+                                    <option value="python">Python</option>
+                                    <option value="cpp">C++</option>
+                                    <option value="javascript">JavaScript</option>
+                                </select>
+                            </div>
+                            <div class="oj-editor-actions">
+                                <button class="oj-btn oj-btn-icon" id="ojFormatBtn" title="格式化">
+                                    <span>🎨</span> 格式化
+                                </button>
+                                <button class="oj-btn oj-btn-icon" id="ojClearBtn" title="清空">
+                                    <span>🗑️</span> 清空
+                                </button>
+                                <button class="oj-btn oj-btn-icon" id="ojCopyBtn" title="复制">
+                                    <span>📋</span> 复制
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Code Editor -->
+                        <div class="oj-editor-container">
+                            <textarea id="ojCodeEditor"></textarea>
+                        </div>
+
+                        <!-- Editor Footer -->
+                        <div class="oj-editor-footer">
+                            <div class="oj-custom-input">
+                                <label>自定义输入:</label>
+                                <textarea id="ojCustomInput" placeholder="(可选) 输入测试数据"></textarea>
+                            </div>
+                            <div class="oj-submit-actions">
+                                <button class="oj-btn oj-btn-run" id="ojRunBtn">
+                                    <span>▶</span> 运行代码
+                                </button>
+                                <button class="oj-btn oj-btn-submit" id="ojSubmitBtn">
+                                    <span>📤</span> 提交代码
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Result Panel -->
+                        <div class="oj-result-panel" id="ojResultPanel">
+                            <div class="oj-result-header">
+                                <h3>运行结果</h3>
+                                <div class="oj-result-tabs">
+                                    <button class="oj-result-tab active" data-tab="output">输出</button>
+                                    <button class="oj-result-tab" data-tab="submit">提交</button>
+                                </div>
+                            </div>
+                            <div class="oj-result-content">
+                                <div class="oj-result-body" id="ojResultBody">
+                                    <p class="oj-placeholder">点击"运行代码"或"提交代码"查看结果</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-slogan">AlgoViz - 数据结构与算法可视化学习平台 · 让学习变得更有趣</div>
+                <div class="footer-bottom-row">
+                    <span>AlgoViz © 2026</span>
+                    <span class="footer-divider">|</span>
+                    <span class="footer-icp">ICP备案：<a href="https://beian.miit.gov.cn/" target="_blank">豫ICP备12345678号</a></span>
+                    <span class="footer-divider">|</span>
+                    <a href="/pages/changelog.html" class="footer-link">更新日志</a>
+                    <span class="footer-divider">|</span>
+                    <a href="/pages/suggestion.html" class="footer-link">建议我</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    </main>
+
+    <!-- CodeMirror JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/clike/clike.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/javascript/javascript.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+
+    <script src="/js/oj.js"></script>
+</body>
+</html>

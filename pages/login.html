@@ -238,6 +238,22 @@
             border-color: var(--primary);
         }
         
+        .login-btn {
+            padding: 0.75rem 1.5rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: 1rem;
+        }
+        
+        .login-btn:hover {
+            background: var(--secondary);
+        }
+        
         @media (max-width: 768px) {
             .nav-container {
                 padding: 0 1rem;
@@ -315,26 +331,31 @@
             
             <div class="login-footer">
                 <button class="refresh-btn" onclick="refreshCode()">刷新验证码</button>
+                <button class="login-btn" onclick="doLogin()">确认登录</button>
             </div>
         </div>
     </main>
 
     <script>
     (function() {
+        // API基础URL配置
+        var API_BASE_URL = 'http://localhost:81';
+        
         function setTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
             localStorage.setItem('algoviz-theme', theme);
             var btn = document.getElementById('themeToggle');
             if (btn) {
-                btn.textContent = theme === 'dark' ? '🌙' : '☀️';
-                btn.style.background = theme === 'dark' ? '#1a1a2e' : '#ffffff';
-                btn.style.borderColor = theme === 'dark' ? '#2d2d4a' : '#e2e8f0';
+                var icon = btn.querySelector('.theme-icon');
+                if (icon) {
+                    icon.textContent = theme === 'dark' ? '🌙' : '☀️';
+                }
             }
             document.body.style.background = theme === 'dark' ? '#0f0f23' : '#f5f7fa';
         }
         
         function toggleTheme() {
-            var current = document.documentElement.getAttribute('data-theme') || 'dark';
+            var current = document.documentElement.getAttribute('data-theme') || 'light';
             var next = current === 'dark' ? 'light' : 'dark';
             setTheme(next);
         }
@@ -349,36 +370,94 @@
         }
         
         // 倒计时功能
-        function startCountdown() {
+        function startCountdown(seconds) {
             var countdownElement = document.getElementById('countdown');
-            var seconds = 117;
+            if (!countdownElement) return;
+            
+            var remaining = seconds || 117;
+            countdownElement.textContent = remaining;
             
             var interval = setInterval(function() {
-                seconds--;
-                countdownElement.textContent = seconds;
+                remaining--;
+                countdownElement.textContent = remaining;
                 
-                if (seconds <= 0) {
+                if (remaining <= 0) {
                     clearInterval(interval);
-                    // 验证码过期，可以提示用户刷新
                 }
             }, 1000);
         }
         
-        // 刷新验证码
-        function refreshCode() {
-            // 模拟刷新验证码
-            var verificationCode = document.querySelector('.verification-code');
-            // 生成随机验证码
-            var newCode = Math.floor(100000 + Math.random() * 900000);
-            verificationCode.textContent = newCode;
-            
-            // 重置倒计时
-            var countdownElement = document.getElementById('countdown');
-            countdownElement.textContent = '117';
-            startCountdown();
+        // 从后端获取验证码
+        async function fetchVerificationCode() {
+            try {
+                var response = await fetch(API_BASE_URL + '/api/login/verification-code', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    var data = await response.text();
+                    var verificationCode = document.querySelector('.verification-code');
+                    if (verificationCode) {
+                        verificationCode.textContent = data;
+                    }
+                    startCountdown(117);
+                    return data;
+                } else {
+                    console.error('获取验证码失败:', response.status);
+                    return null;
+                }
+            } catch (error) {
+                console.error('获取验证码失败:', error);
+                return null;
+            }
         }
         
-        // 模拟登录成功
+        // 刷新验证码
+        function refreshCode() {
+            fetchVerificationCode();
+        }
+        
+        // 执行登录
+        async function doLogin() {
+            var verificationCode = document.querySelector('.verification-code');
+            var code = verificationCode ? verificationCode.textContent : '';
+            
+            try {
+                var response = await fetch(API_BASE_URL + '/api/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        code: 'wechat_code_' + Date.now(),
+                        verificationCode: code
+                    })
+                });
+                
+                var result = await response.json();
+                
+                if (result.success) {
+                    // 登录成功，保存用户信息
+                    localStorage.setItem('isLoggedIn', 'true');
+                    localStorage.setItem('userAvatar', result.userInfo.avatar || '👤');
+                    localStorage.setItem('userInfo', JSON.stringify(result.userInfo));
+                    localStorage.setItem('token', result.token);
+                    
+                    alert('登录成功！');
+                    window.location.href = '/pages/profile.html';
+                } else {
+                    alert('登录失败: ' + result.message);
+                }
+            } catch (error) {
+                console.error('登录失败:', error);
+                alert('登录失败，请检查网络连接');
+            }
+        }
+        
+        // 模拟登录成功（保留用于测试）
         function simulateLogin() {
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('userAvatar', '👤');
@@ -387,8 +466,9 @@
         
         window.toggleTheme = toggleTheme;
         window.refreshCode = refreshCode;
+        window.doLogin = doLogin;
         
-        var saved = localStorage.getItem('algoviz-theme') || 'dark';
+        var saved = localStorage.getItem('algoviz-theme') || 'light';
         setTheme(saved);
         
         var btn = document.getElementById('themeToggle');
@@ -396,8 +476,8 @@
             btn.addEventListener('click', toggleTheme);
         }
         
-        // 开始倒计时
-        startCountdown();
+        // 初始化时获取验证码
+        fetchVerificationCode();
         
         // 更新访问量显示
         updateVisitCount();

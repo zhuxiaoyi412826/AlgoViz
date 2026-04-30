@@ -56,10 +56,17 @@
                 <a href="javascript:void(0)" class="nav-link" id="profileLink">
                     <span class="nav-avatar" id="navAvatar">👤</span>
                 </a>
+                <a href="/pages/ai.html" class="nav-link ai-link">
+                    <span>✨</span> AI助手
+                </a>
             </div>
             <div class="nav-actions">
                 <div class="visit-counter">访问量: <span id="visitCount">0</span></div>
-                <button id="themeToggle" style="width:38px;height:38px;border-radius:50%;border:1px solid #2d2d4a;background:#1a1a2e;cursor:pointer;font-size:18px;">🌙</button>
+                <button id="themeToggle" class="theme-switch" aria-label="切换主题">
+                    <div class="theme-switch-handle">
+                        <span class="theme-icon">☀️</span>
+                    </div>
+                </button>
             </div>
         </div>
     </nav>
@@ -71,16 +78,17 @@
             localStorage.setItem('algoviz-theme', theme);
             var btn = document.getElementById('themeToggle');
             if (btn) {
-                btn.textContent = theme === 'dark' ? '🌙' : '☀️';
-                btn.style.background = theme === 'dark' ? '#1a1a2e' : '#ffffff';
-                btn.style.borderColor = theme === 'dark' ? '#2d2d4a' : '#e2e8f0';
+                var icon = btn.querySelector('.theme-icon');
+                if (icon) {
+                    icon.textContent = theme === 'dark' ? '🌙' : '☀️';
+                }
             }
             // 调试：更新 body 背景
             document.body.style.background = theme === 'dark' ? '#0f0f23' : '#f5f7fa';
         }
         
         function toggleTheme() {
-            var current = document.documentElement.getAttribute('data-theme') || 'dark';
+            var current = document.documentElement.getAttribute('data-theme') || 'light';
             var next = current === 'dark' ? 'light' : 'dark';
             setTheme(next);
         }
@@ -114,7 +122,7 @@
         
         window.toggleTheme = toggleTheme;
         
-        var saved = localStorage.getItem('algoviz-theme') || 'dark';
+        var saved = localStorage.getItem('algoviz-theme') || 'light';
         setTheme(saved);
         
         var btn = document.getElementById('themeToggle');

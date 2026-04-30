@@ -3,7 +3,7 @@
  */
 
 function initTheme() {
-    const savedTheme = localStorage.getItem('algoviz-theme') || 'dark';
+    const savedTheme = localStorage.getItem('algoviz-theme') || 'light';
     setTheme(savedTheme);
 }
 
@@ -13,14 +13,16 @@ function setTheme(theme) {
     
     const btn = document.getElementById('themeToggle');
     if (btn) {
-        btn.textContent = theme === 'dark' ? '🌙' : '☀️';
-        btn.style.background = theme === 'dark' ? '#1a1a2e' : '#ffffff';
-        btn.style.borderColor = theme === 'dark' ? '#2d2d4a' : '#e2e8f0';
+        // Updated to use new theme switch structure
+        const icon = btn.querySelector('.theme-icon');
+        if (icon) {
+            icon.textContent = theme === 'dark' ? '🌙' : '☀️';
+        }
     }
 }
 
 function toggleTheme() {
-    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
     const next = current === 'dark' ? 'light' : 'dark';
     setTheme(next);
 }

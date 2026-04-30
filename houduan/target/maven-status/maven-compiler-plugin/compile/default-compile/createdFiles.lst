@@ -1,0 +1,14 @@
+com\algoviz\entity\User.class
+com\algoviz\Application.class
+com\algoviz\dto\LoginResponse$UserInfo.class
+com\algoviz\controller\WechatController.class
+com\algoviz\service\impl\UserServiceImpl.class
+com\algoviz\service\LoginService.class
+com\algoviz\service\impl\LoginServiceImpl.class
+com\algoviz\config\DatabaseInitializer.class
+com\algoviz\controller\UserController.class
+com\algoviz\controller\LoginController.class
+com\algoviz\dto\LoginRequest.class
+com\algoviz\dto\LoginResponse.class
+com\algoviz\mapper\UserMapper.class
+com\algoviz\service\UserService.class

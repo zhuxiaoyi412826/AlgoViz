@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>二分插入排序可视化</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5',
+                        secondary: '#EC4899',
+                        success: '#10B981',
+                        info: '#06B6D4',
+                        warning: '#F59E0B',
+                        danger: '#EF4444',
+                        dark: '#1F2937',
+                        light: '#F9FAFB'
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .array-bar {
+                transition: all 0.3s ease;
+            }
+            .array-container {
+                display: flex;
+                align-items: flex-end;
+                justify-content: center;
+                gap: 2px;
+                height: 300px;
+                padding: 10px;
+                margin: 20px 0;
+            }
+            .btn-hover {
+                @apply transition-all duration-300 hover:shadow-lg hover:-translate-y-0.5;
+            }
+            .card {
+                @apply bg-white rounded-xl shadow-md p-6 transition-all duration-300 hover:shadow-lg;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-50 to-slate-100 min-h-screen font-inter text-slate-800">
+    <div class="container mx-auto px-4 py-8 max-w-5xl">
+        <!-- 标题部分 -->
+        <header class="text-center mb-10">
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-info mb-4">
+                二分插入排序可视化
+            </h1>
+            <p class="text-slate-600 text-lg max-w-2xl mx-auto">
+                通过动画直观理解二分插入排序算法的工作原理，调整参数并实时观察排序过程。
+            </p>
+        </header>
+
+        <!-- 控制面板 -->
+        <div class="card mb-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label for="array-size" class="block text-sm font-medium text-slate-700 mb-2">数组大小</label>
+                    <div class="flex items-center">
+                        <input type="range" id="array-size" min="5" max="100" value="30" 
+                            class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary">
+                        <span id="array-size-value" class="ml-3 text-sm font-medium w-8 text-center">30</span>
+                    </div>
+                </div>
+                <div>
+                    <label for="sort-speed" class="block text-sm font-medium text-slate-700 mb-2">排序速度</label>
+                    <div class="flex items-center">
+                        <input type="range" id="sort-speed" min="1" max="100" value="30" 
+                            class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary">
+                        <span id="sort-speed-value" class="ml-3 text-sm font-medium w-8 text-center">30</span>
+                    </div>
+                </div>
+                <div class="flex items-end">
+                    <button id="generate-array" class="w-full bg-primary hover:bg-primary/90 text-white py-2 px-4 rounded-lg btn-hover">
+                        <i class="fa-solid fa-random mr-2"></i>生成数组
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 数组可视化区域 -->
+        <div class="card mb-8">
+            <div id="array-container" class="array-container bg-slate-50 rounded-lg overflow-hidden">
+                <!-- 数组条将在这里动态生成 -->
+            </div>
+        </div>
+
+        <!-- 排序按钮 -->
+        <div class="flex justify-center gap-4 mb-8">
+            <button id="sort-btn" class="bg-secondary hover:bg-secondary/90 text-white py-3 px-8 rounded-lg text-lg font-medium btn-hover disabled:opacity-50 disabled:cursor-not-allowed">
+                <i class="fa-solid fa-play mr-2"></i>开始排序
+            </button>
+        </div>
+
+        <!-- 算法说明 -->
+        <div class="card">
+            <h2 class="text-xl font-bold text-slate-800 mb-4">二分插入排序原理</h2>
+            <div class="prose max-w-none">
+                <p>二分插入排序是对直接插入排序的改进，采用二分法查找插入位置，减少比较次数：</p>
+                <ol class="list-decimal pl-5 my-2">
+                    <li>将数组分为已排序和未排序两部分</li>
+                    <li>对于未排序数据，使用二分法在已排序序列中找到合适位置</li>
+                    <li>将该位置后的所有元素后移</li>
+                    <li>插入当前元素</li>
+                </ol>
+                <p>时间复杂度为 O(n²)，但平均比较次数减少到 O(n log n)。该算法比直接插入排序更高效，尤其适用于部分有序的数据。</p>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="mt-12 text-center text-slate-500 text-sm">
+            <p>© 2025 排序算法可视化工具 | 使用 Tailwind CSS 和 JavaScript 构建</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM 元素
+            const arrayContainer = document.getElementById('array-container');
+            const generateArrayBtn = document.getElementById('generate-array');
+            const sortBtn = document.getElementById('sort-btn');
+            const arraySizeSlider = document.getElementById('array-size');
+            const arraySizeValue = document.getElementById('array-size-value');
+            const sortSpeedSlider = document.getElementById('sort-speed');
+            const sortSpeedValue = document.getElementById('sort-speed-value');
+
+            // 状态变量
+            let array = [];
+            let isSorting = false;
+            let animationSpeed = 100 - sortSpeedSlider.value; // 反转值，使滑块右侧为快速
+
+            // 更新滑块显示值
+            arraySizeSlider.addEventListener('input', () => {
+                arraySizeValue.textContent = arraySizeSlider.value;
+            });
+
+            sortSpeedSlider.addEventListener('input', () => {
+                sortSpeedValue.textContent = sortSpeedSlider.value;
+                animationSpeed = 100 - sortSpeedSlider.value;
+            });
+
+            // 生成随机数组
+            function generateRandomArray(size) {
+                array = [];
+                for (let i = 0; i < size; i++) {
+                    const value = Math.floor(Math.random() * 250) + 10;
+                    array.push(value);
+                }
+                renderArray();
+            }
+
+            // 渲染数组可视化
+            function renderArray(activeIndices = [], compareIndices = []) {
+                arrayContainer.innerHTML = '';
+                array.forEach((value, index) => {
+                    const bar = document.createElement('div');
+                    bar.className = 'array-bar bg-primary/80 rounded-t-sm transition-all duration-150';
+                    bar.style.height = `${value}px`;
+                    bar.style.width = `${(95 / array.length)}%`;
+                    
+                    // 高亮当前正在处理的元素
+                    if (activeIndices.includes(index)) {
+                        bar.classList.add('bg-warning');
+                    }
+                    
+                    // 高亮正在比较的元素
+                    if (compareIndices.includes(index)) {
+                        bar.classList.add('bg-secondary');
+                    }
+                    
+                    // 高亮已排序部分
+                    if (index < activeIndices[0] && !activeIndices.includes(index) && !compareIndices.includes(index)) {
+                        bar.classList.add('bg-success/60');
+                    }
+                    
+                    arrayContainer.appendChild(bar);
+                });
+            }
+
+            // 二分查找插入位置
+            async function binarySearch(arr, val, low, high) {
+                while (low <= high) {
+                    const mid = Math.floor((low + high) / 2);
+                    
+                    // 高亮当前比较的元素
+                    renderArray([], [mid]);
+                    await new Promise(resolve => setTimeout(resolve, animationSpeed));
+                    
+                    if (arr[mid] < val) {
+                        low = mid + 1;
+                    } else {
+                        high = mid - 1;
+                    }
+                }
+                
+                // 返回插入位置
+                return low;
+            }
+
+            // 二分插入排序
+            async function binaryInsertionSort() {
+                for (let i = 1; i < array.length && isSorting; i++) {
+                    const current = array[i];
+                    let j = i - 1;
+                    
+                    // 高亮当前元素
+                    renderArray([i]);
+                    await new Promise(resolve => setTimeout(resolve, animationSpeed));
+                    
+                    // 使用二分查找找到插入位置
+                    const insertPos = await binarySearch(array, current, 0, j);
+                    
+                    // 高亮插入位置
+                    renderArray([i], [insertPos]);
+                    await new Promise(resolve => setTimeout(resolve, animationSpeed * 2));
+                    
+                    // 移动元素以腾出插入空间
+                    for (let k = j; k >= insertPos; k--) {
+                        array[k + 1] = array[k];
+                        
+                        // 视觉更新
+                        renderArray([i, k + 1], [insertPos]);
+                        await new Promise(resolve => setTimeout(resolve, animationSpeed));
+                    }
+                    
+                    // 插入元素
+                    array[insertPos] = current;
+                    
+                    // 更新视觉
+                    renderArray([insertPos]);
+                    await new Promise(resolve => setTimeout(resolve, animationSpeed));
+                }
+                
+                // 排序完成后高亮所有元素为绿色
+                renderArray(array.map((_, i) => i));
+                await new Promise(resolve => setTimeout(resolve, 1000));
+            }
+
+            // 开始排序
+            async function startSorting() {
+                if (isSorting) return;
+                
+                isSorting = true;
+                sortBtn.disabled = true;
+                generateArrayBtn.disabled = true;
+                
+                await binaryInsertionSort();
+                
+                // 恢复正常状态
+                isSorting = false;
+                sortBtn.disabled = false;
+                generateArrayBtn.disabled = false;
+                renderArray();
+            }
+
+            // 事件监听
+            generateArrayBtn.addEventListener('click', () => {
+                if (!isSorting) {
+                    generateRandomArray(parseInt(arraySizeSlider.value));
+                }
+            });
+
+            sortBtn.addEventListener('click', startSorting);
+
+            // 初始化
+            generateRandomArray(parseInt(arraySizeSlider.value));
+        });
+    </script>
+</body>
+</html>
+    

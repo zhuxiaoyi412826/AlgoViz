@@ -2,14 +2,15 @@
 
 ## 项目概览
 
-AlgoViz 是一个交互式的数据结构和算法可视化学习网站，帮助用户通过动画深入理解常见数据结构和经典算法的执行过程。
+AlgoViz 是一个交互式的数据结构和算法可视化学习网站，帮助用户通过动画深入理解常见数据结构和经典算法的执行过程。  
+**访问地址**:https://dsaol.asia/
 
 ## 技术栈
 
 - **前端**: 原生 HTML5 + CSS3 + JavaScript (ES6+)
 - **样式**: 自定义 CSS (无框架依赖)
 - **字体**: Inter (正文) + Fira Code (代码)
-- **服务器**: Python SimpleHTTPServer (端口 5000)
+- **部署环境**: Apache Tomcat (支持 8.x/9.x/10.x 版本)
 
 ## 目录结构
 
@@ -18,7 +19,11 @@ AlgoViz 是一个交互式的数据结构和算法可视化学习网站，帮助
 ├── index.html                    # 首页
 ├── pages/
 │   ├── datastructures.html       # 数据结构页面
-│   └── algorithms.html           # 算法演示页面
+│   ├── algorithms.html           # 算法演示页面
+│   ├── oj.html                   # 在线OJ独立页面
+│   ├── ai.html                   # AI 智能助手页面
+│   ├── login.html                # 用户登录页面
+│   └── profile.html              # 个人中心页面
 ├── styles/
 │   ├── main.css                  # 全局样式
 │   ├── datastructures.css        # 数据结构页样式
@@ -26,6 +31,7 @@ AlgoViz 是一个交互式的数据结构和算法可视化学习网站，帮助
 │   └── oj.css                    # 在线OJ样式
 └── js/
     ├── main.js                   # 首页脚本
+    ├── ai-chat.js                # AI 助手对话逻辑
     ├── datastructures.js         # 数据结构页控制器
     ├── algorithms.js             # 算法页控制器
     ├── oj.js                     # 在线OJ前端逻辑
@@ -112,30 +118,37 @@ AlgoViz 是一个交互式的数据结构和算法可视化学习网站，帮助
 
 ## 启动方式
 
-```bash
-# 开发环境已自动启动在端口 5000
-# 访问 http://localhost:5000
-```
+由于前端和后端作为独立服务运行，你需要使用 Apache Tomcat 来部署静态前端项目：
+
+1. **下载并安装 Tomcat**：如果你还没有安装，请从 [Apache Tomcat 官网](https://tomcat.apache.org/) 下载安装包并解压。
+2. **部署前端文件**：将当前 `AlgoViz` 根目录下的所有前端文件（如 `index.html`, `pages`, `styles`, `js` 等）放入 Tomcat 安装目录的 `webapps/ROOT/` 文件夹中（建议先清空原有的 `ROOT` 目录内容）。
+3. **启动 Tomcat**：进入 Tomcat 的 `bin` 目录，运行 `startup.bat` (Windows) 或 `startup.sh` (Mac/Linux)。
+4. **访问**：在浏览器中打开 `http://localhost:8080/` 即可访问前端页面。
+
+*(注意：如果你将项目放在 `webapps/algoviz/` 目录下，访问路径将变为 `http://localhost:8080/algoviz/`)*
 
 ## 访问地址
 
-- 首页: `http://localhost:5000/`
-- 数据结构: `http://localhost:5000/pages/datastructures.html`
-- 算法演示: `http://localhost:5000/pages/algorithms.html`
+- 首页: `http://localhost:8080/`
+- 数据结构: `http://localhost:8080/pages/datastructures.html`
+- 算法演示: `http://localhost:8080/pages/algorithms.html`
+- 在线OJ: `http://localhost:8080/pages/oj.html`
+- AI 助手: `http://localhost:8080/pages/ai.html`
 
 ## 使用说明
 
 1. **数据结构页面**: 选择数据结构类型 → 输入或随机生成数据 → 选择操作 → 观看动画
-2. **算法页面**: 选择算法 → 设置数据 → 点击播放 → 观看执行过程
-3. **在线OJ**: 选择"在线OJ"模式 → 选择题目 → 编写代码 → 运行/提交 → 查看结果
-
-## 注意事项
-
-- 使用随机数据生成时，数据会在页面刷新后重置
-- 动画速度调节范围: 50ms - 1500ms
-- 图算法使用圆形布局自动计算节点位置
+2. **算法页面**: 选择算法演示模块 → 调整数据 → 点击播放 → 观看执行过程
+3. **在线OJ**: 进入独立"在线OJ"页面 → 选择题目 → 编写代码 → 运行/提交 → 查看结果
+4. **AI 助手**: 点击导航栏✨进入 AI 对话界面，随时提问算法原理和代码实现
 
 ## 新增功能 (交互体验优化)
+
+### 🤖 智能 AI 助手 (DeepSeek)
+- **多轮对话管理**: 左侧侧边栏支持创建新对话和历史记录切换。
+- **强大的代码支持**: 支持代码块语言高亮识别，提供一键复制功能。
+- **实时流式输出**: 接入真实的 DeepSeek 接口，支持打字机效果及生成中断。
+- **快捷提问**: 提供常用的算法学习 Prompt 胶囊按钮。
 
 ### 暗色模式
 

@@ -797,6 +797,20 @@ html[data-theme="dark"] .theme-icon {
     text-decoration: underline;
 }
 
+.footer-github {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    color: var(--primary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+}
+
+.footer-github:hover {
+    color: var(--accent);
+    text-decoration: underline;
+}
+
 .footer-icp {
     color: var(--text-muted);
 }

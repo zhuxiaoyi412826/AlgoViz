@@ -24,3 +24,11 @@ wechat:
   appid: wx82436d7e59251ede
   appsecret: 0f68f26ea80d9afcb3d6330accb66381
   encoding-aes-key: LPaoICvbhN6wcB9F5xllgxMaMIe1xEcdmA0kLIscBIF
+  pay:
+    mch-id: 1111047407
+    mch-shortname: 亚茹
+    api-v3-key: zhuxiaoyi1234567890ZHUXIAOYI1234
+    cert-path: /path/to/cert.pem
+    private-key-path: /path/to/private-key.pem
+    cert-serial-no: 你的证书序列号
+    notify-url: https://dsaol.asia/api/payment/callback

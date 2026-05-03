@@ -72,24 +72,13 @@ public class WechatController {
             @RequestParam(value = "nonce", required = false) String nonce,
             @RequestBody String requestBody) {
 
-        System.out.println("\n========== 收到微信POST消息 ==========");
-        System.out.println("signature: " + signature);
-        System.out.println("timestamp: " + timestamp);
-        System.out.println("nonce: " + nonce);
-        System.out.println("requestBody: " + requestBody);
-
         // 验证请求来源
         if (!checkSignature(signature, timestamp, nonce)) {
-            System.out.println("❌ 签名验证失败");
             return "error";
         }
 
-        System.out.println("✅ 签名验证成功，开始处理消息");
-
         // 处理消息并返回响应
-        String response = processMessage(requestBody);
-        System.out.println("响应消息: " + response);
-        return response;
+        return processMessage(requestBody);
     }
 
     /**
@@ -148,39 +137,23 @@ public class WechatController {
      * 处理接收到的消息
      */
     private String processMessage(String xml) {
-        System.out.println("\n========== 开始解析消息 ==========");
-        System.out.println("原始XML: " + xml);
-
         // 简单正则解析XML，实际项目中建议使用 dom4j 等库
         String toUserName = extractXmlNode(xml, "ToUserName");
         String fromUserName = extractXmlNode(xml, "FromUserName");
         String msgType = extractXmlNode(xml, "MsgType");
         String content = extractXmlNode(xml, "Content");
 
-        System.out.println("ToUserName: " + toUserName);
-        System.out.println("FromUserName: " + fromUserName);
-        System.out.println("MsgType: " + msgType);
-        System.out.println("Content: " + content);
-
         if ("text".equals(msgType)) {
-            System.out.println("📝 收到文本消息");
             if (content != null) {
                 content = content.trim();
-                System.out.println("处理后的Content: '" + content + "'");
-                
                 // 如果是6位数字验证码，尝试验证登录
                 if (content.matches("\\d{6}")) {
-                    System.out.println("🔢 检测到6位数字验证码: " + content);
                     boolean success = loginService.verifyCodeFromWechat(content, fromUserName);
-                    System.out.println("验证结果: " + (success ? "成功" : "失败"));
-                    
                     if (success) {
                         return buildTextMessage(fromUserName, toUserName, "登录成功！欢迎来到AlgoViz数据结构与算法可视化学习平台。");
                     } else {
                         return buildTextMessage(fromUserName, toUserName, "验证码无效或已过期，请在网页上刷新验证码后重试。");
                     }
-                } else {
-                    System.out.println("❌ 不是6位数字验证码");
                 }
             }
             return buildTextMessage(fromUserName, toUserName, "您可以输入网页上显示的6位数字验证码进行登录。");
@@ -188,13 +161,11 @@ public class WechatController {
 
         if ("event".equals(msgType)) {
             String event = extractXmlNode(xml, "Event");
-            System.out.println("📅 收到事件消息: " + event);
             if ("subscribe".equals(event)) {
                 return buildTextMessage(fromUserName, toUserName, "感谢关注AlgoViz！\n请输入网页上的6位数字验证码完成登录。");
             }
         }
 
-        System.out.println("⚠️ 未处理的消息类型");
         return "success";
     }
 

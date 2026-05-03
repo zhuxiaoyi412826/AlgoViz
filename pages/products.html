@@ -462,7 +462,7 @@
     <div class="modal" id="paymentModal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 class="modal-title">选择支付方式</h3>
+                <h3 class="modal-title">微信支付</h3>
                 <button class="modal-close" onclick="closeModal()">&times;</button>
             </div>
             <div class="payment-options">
@@ -470,20 +470,15 @@
                     <div class="payment-icon">💳</div>
                     <div class="payment-info">
                         <h4>微信支付</h4>
-                        <p>扫码支付</p>
+                        <p>使用微信扫码支付</p>
                     </div>
                     <div class="payment-qr">
                         <canvas id="wechatQR"></canvas>
                     </div>
-                </div>
-                <div class="payment-option" onclick="selectPayment('alipay')">
-                    <div class="payment-icon">💳</div>
-                    <div class="payment-info">
-                        <h4>支付宝</h4>
-                        <p>扫码支付</p>
-                    </div>
-                    <div class="payment-qr">
-                        <canvas id="alipayQR"></canvas>
+                    <div class="payment-hint">
+                        <p style="margin-top: 10px; color: #666; font-size: 12px;">
+                            扫码后等待支付完成，或点击进行 <a href="javascript:void(0);" onclick="mockPayment(currentOrderId)" style="color: var(--primary); text-decoration: underline;">模拟支付</a>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -491,36 +486,156 @@
     </div>
 
     <script>
+        let currentProduct = null;
+        let currentOrderId = null;
+        let pollInterval = null;
+        
+        // 获取API基础URL
+        function getApiBaseUrl() {
+            var protocol = window.location.protocol;
+            var host = window.location.hostname || 'localhost';
+            
+            if (protocol === 'https:') {
+                return 'https://' + host + ':3000';
+            } else {
+                return 'http://' + host + ':80';
+            }
+        }
+        
         // 打开支付模态框
-        function openPaymentModal(product) {
+        async function openPaymentModal(product) {
+            currentProduct = product;
             document.getElementById('paymentModal').style.display = 'flex';
             
-            // 生成微信支付二维码
-            QRCode.toCanvas(document.getElementById('wechatQR'), 'wechat://pay?product=' + product, {
+            try {
+                // 调用后端API创建订单
+                var response = await fetch(getApiBaseUrl() + '/api/payment/order', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ productId: product })
+                });
+                
+                var result = await response.json();
+                
+                if (result.success) {
+                    currentOrderId = result.orderId;
+                    
+                    // 更新模态框信息
+                    updatePaymentModal(result);
+                    
+                    // 生成支付二维码
+                    generateQRCode(result.qrCodeText);
+                    
+                    // 开始轮询订单状态
+                    startPolling(result.orderId);
+                } else {
+                    alert('创建订单失败：' + result.message);
+                    closeModal();
+                }
+            } catch (error) {
+                console.error('创建订单失败：', error);
+                alert('创建订单失败，请稍后重试');
+                closeModal();
+            }
+        }
+        
+        // 更新支付模态框信息
+        function updatePaymentModal(data) {
+            var modalTitle = document.querySelector('.modal-title');
+            modalTitle.textContent = '支付订单 - ' + data.productName;
+        }
+        
+        // 生成支付二维码
+        function generateQRCode(text) {
+            QRCode.toCanvas(document.getElementById('wechatQR'), text, {
                 width: 150,
-                margin: 1
+                margin: 1,
+                color: {
+                    dark: '#000000',
+                    light: '#ffffff'
+                }
             }, function (error) {
-                if (error) console.error(error);
-            });
-            
-            // 生成支付宝支付二维码
-            QRCode.toCanvas(document.getElementById('alipayQR'), 'alipay://pay?product=' + product, {
-                width: 150,
-                margin: 1
-            }, function (error) {
-                if (error) console.error(error);
+                if (error) {
+                    console.error(error);
+                    alert('生成二维码失败');
+                }
             });
         }
         
         // 关闭支付模态框
         function closeModal() {
             document.getElementById('paymentModal').style.display = 'none';
+            
+            // 清除轮询
+            if (pollInterval) {
+                clearInterval(pollInterval);
+                pollInterval = null;
+            }
+            
+            currentProduct = null;
+            currentOrderId = null;
         }
         
-        // 选择支付方式
+        // 开始轮询订单状态
+        function startPolling(orderId) {
+            if (pollInterval) {
+                clearInterval(pollInterval);
+            }
+            
+            pollInterval = setInterval(async function() {
+                try {
+                    var response = await fetch(getApiBaseUrl() + '/api/payment/order/' + orderId);
+                    var result = await response.json();
+                    
+                    console.log('订单状态：', result);
+                    
+                    if (result.success) {
+                        if (result.status === 'SUCCESS') {
+                            // 支付成功
+                            clearInterval(pollInterval);
+                            pollInterval = null;
+                            
+                            alert('支付成功！感谢您的购买');
+                            closeModal();
+                            
+                            // 可以刷新页面或跳转到其他页面
+                            window.location.href = '../index.html';
+                        }
+                    }
+                } catch (error) {
+                    console.error('查询订单失败：', error);
+                }
+            }, 2000);
+        }
+        
+        // 选择支付方式（微信支付）
         function selectPayment(method) {
-            alert(`选择了${method === 'wechat' ? '微信' : '支付宝'}支付，功能正在开发中...`);
-            closeModal();
+            if (method === 'wechat' && currentOrderId) {
+                // 提供模拟支付按钮
+                if (confirm('是否进行模拟支付？（测试用）')) {
+                    mockPayment(currentOrderId);
+                }
+            }
+        }
+        
+        // 模拟支付（测试用）
+        async function mockPayment(orderId) {
+            try {
+                var response = await fetch(getApiBaseUrl() + '/api/payment/order/' + orderId + '/mock-pay', {
+                    method: 'POST'
+                });
+                
+                var result = await response.json();
+                
+                if (result.success) {
+                    alert('模拟支付成功！');
+                }
+            } catch (error) {
+                console.error('模拟支付失败：', error);
+                alert('模拟支付失败');
+            }
         }
         
         // 分类切换功能

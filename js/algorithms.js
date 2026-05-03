@@ -60,22 +60,28 @@ function initElements() {
 // 初始化事件监听
 function initEventListeners() {
     // 算法选择
-    elements.algoButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const algo = btn.dataset.algo;
-            selectAlgorithm(algo);
+    if (elements.algoButtons) {
+        elements.algoButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const algo = btn.dataset.algo;
+                if (algo) selectAlgorithm(algo);
+            });
         });
-    });
+    }
 
     // 数组大小
-    elements.arraySizeSlider.addEventListener('input', () => {
-        const size = parseInt(elements.arraySizeSlider.value);
-        elements.arraySizeValue.textContent = size;
-        generateRandomData();
-    });
+    if (elements.arraySizeSlider) {
+        elements.arraySizeSlider.addEventListener('input', () => {
+            const size = parseInt(elements.arraySizeSlider.value);
+            elements.arraySizeValue.textContent = size;
+            generateRandomData();
+        });
+    }
 
     // 随机数据
-    elements.algoRandomBtn.addEventListener('click', generateRandomData);
+    if (elements.algoRandomBtn) {
+        elements.algoRandomBtn.addEventListener('click', generateRandomData);
+    }
 
     // 文件上传
     if (elements.algoFileInput) {
@@ -86,12 +92,14 @@ function initEventListeners() {
     }
 
     // 预设按钮
-    elements.algoPresetBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const preset = btn.dataset.preset;
-            applyAlgoPreset(preset);
+    if (elements.algoPresetBtns) {
+        elements.algoPresetBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const preset = btn.dataset.preset;
+                applyAlgoPreset(preset);
+            });
         });
-    });
+    }
 
     // 生成图
     elements.generateGraphBtn?.addEventListener('click', () => {
@@ -104,14 +112,14 @@ function initEventListeners() {
     });
 
     // 播放控制
-    elements.algoPlayBtn.addEventListener('click', play);
-    elements.algoPauseBtn.addEventListener('click', pause);
-    elements.algoStepBackBtn.addEventListener('click', stepBack);
-    elements.algoStepForwardBtn.addEventListener('click', stepForward);
-    elements.algoResetBtn.addEventListener('click', reset);
+    if (elements.algoPlayBtn) elements.algoPlayBtn.addEventListener('click', play);
+    if (elements.algoPauseBtn) elements.algoPauseBtn.addEventListener('click', pause);
+    if (elements.algoStepBackBtn) elements.algoStepBackBtn.addEventListener('click', stepBack);
+    if (elements.algoStepForwardBtn) elements.algoStepForwardBtn.addEventListener('click', stepForward);
+    if (elements.algoResetBtn) elements.algoResetBtn.addEventListener('click', reset);
 
     // 速度控制
-    elements.algoSpeedSlider.addEventListener('input', updateSpeed);
+    if (elements.algoSpeedSlider) elements.algoSpeedSlider.addEventListener('input', updateSpeed);
 
     // 导出GIF
     const exportBtn = document.getElementById('exportGifBtn');
@@ -193,6 +201,9 @@ function applyAlgoPreset(preset) {
 
 // 初始化可视化器
 function initVisualizers() {
+    const canvas = document.getElementById('algoVisualizationCanvas');
+    if (!canvas) return; // 容错处理：如果当前页面没有可视化画布则不初始化
+
     visualizers.sorting = new SortingVisualizer('algoVisualizationCanvas');
     visualizers.searching = new SearchingVisualizer('algoVisualizationCanvas');
     visualizers.treeTraversal = new TraversalVisualizer('algoVisualizationCanvas');
@@ -209,10 +220,14 @@ function initVisualizers() {
 
 // 选择算法
 function selectAlgorithm(algo) {
+    if (!document.getElementById('algoVisualizationCanvas')) return; // 如果没有画布则不执行后续渲染逻辑
+
     // 更新按钮状态
-    elements.algoButtons.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.algo === algo);
-    });
+    if (elements.algoButtons) {
+        elements.algoButtons.forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.algo === algo);
+        });
+    }
 
     currentAlgo = algo;
 

@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>算法演示 - AlgoViz</title>
+    <link rel="icon" type="image/png" href="../images/tubiao.png">
     <link rel="stylesheet" href="../styles/main.css">
     <link rel="stylesheet" href="../styles/algorithms.css">
     <link rel="stylesheet" href="../styles/oj.css">
@@ -65,9 +66,6 @@
                 <a href="../pages/algorithms.html" class="nav-link active">算法演示</a>
                 <a href="../pages/oj.html" class="nav-link">在线OJ</a>
                 <a href="../pages/products.html" class="nav-link">商品</a>
-                <a href="javascript:void(0)" class="nav-link" id="profileLink">
-                    <span class="nav-avatar" id="navAvatar">👤</span>
-                </a>
                 <a href="../pages/ai.html" class="nav-link ai-link">
                     <span>✨</span> AI助手
                 </a>
@@ -79,6 +77,9 @@
                         <span class="theme-icon">☀️</span>
                     </div>
                 </button>
+                <a href="javascript:void(0)" class="nav-link" id="profileLink">
+                    <span class="nav-avatar" id="navAvatar">👤</span>
+                </a>
             </div>
         </div>
     </nav>
@@ -239,12 +240,21 @@
 
             // 访问量计数
             function updateVisitCount() {
-                var count = localStorage.getItem('visitCount') || 0;
-                var visitCountElement = document.getElementById('visitCount');
-                if (visitCountElement) {
-                    visitCountElement.textContent = count;
-                }
+            var count = localStorage.getItem('visitCount') || 0;
+            
+            // 检查当前浏览器是否已经记录过访问
+            var hasVisited = localStorage.getItem('hasVisitedUnique');
+            if (!hasVisited) {
+                count = parseInt(count) + 1;
+                localStorage.setItem('visitCount', count);
+                localStorage.setItem('hasVisitedUnique', 'true');
             }
+            
+            var visitCountElement = document.getElementById('visitCount');
+            if (visitCountElement) {
+                visitCountElement.textContent = count;
+            }
+        }
 
             // 检查登录状态并更新头像
             function checkLoginStatus() {
@@ -348,110 +358,140 @@
             <div class="visualization-mode" id="visualizationMode">
                 <!-- Algorithm Selector -->
                 <div class="algo-category">
-
-                    <button class="algo-btn active" data-algo="bubbleSort"
-                        onclick="window.location.href='/html/algo/soft/index.html'">
-                        <span class="algo-icon"></span>
-                        <span class="algo-name">
-                            <h2 style="margin-bottom:0 ;">排序算法</h2>
-                        </span>
-                    </button>
-                    <!-- <div class="algo-grid" id="sortingAlgos">
-                        <button class="algo-btn active" data-algo="bubbleSort" onclick="window.location.href='/html/algo/soft/index.html'">
-                            <span class="algo-icon">🫧</span>
-                            <span class="algo-name">冒泡排序</span>
+                    <div style="display: flex; align-items: stretch; gap: 1rem; margin-bottom: 1.5rem;">
+                        <!-- 左侧：排序算法标题按钮 -->
+                        <button class="algo-btn active" style="flex-shrink: 0; display: flex; align-items: center; justify-content: center; min-width: 150px; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;" 
+                                onclick="window.location.href='../html/algo/soft/index.html'" 
+                                onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.15)';" 
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                            <span class="algo-name">
+                                <h2 style="margin: 0; color: black;">排序算法</h2>
+                            </span>
                         </button>
-                        <button class="algo-btn" data-algo="selectionSort" onclick="window.location.href='/html/algo/soft/index.html'">
-                            <span class="algo-icon">👆</span>
-                            <span class="algo-name">选择排序</span>
-                        </button>
-                        <button class="algo-btn" data-algo="insertionSort" onclick="window.location.href='/html/algo/soft/index.html'">
-                            <span class="algo-icon">📥</span>
-                            <span class="algo-name">插入排序</span>
-                        </button>
-                        <button class="algo-btn" data-algo="quickSort" onclick="window.location.href='/html/algo/soft/index.html'">
-                            <span class="algo-icon">⚡</span>
-                            <span class="algo-name">快速排序</span>
-                        </button>
-                        <button class="algo-btn" data-algo="mergeSort" onclick="window.location.href='/html/algo/soft/index.html'">
-                            <span class="algo-icon">🔀</span>
-                            <span class="algo-name">归并排序</span>
-                        </button>
-                        <button class="algo-btn" data-algo="heapSort" onclick="window.location.href='/html/algo/soft/index.html'">
-                            <span class="algo-icon">🏔️</span>
-                            <span class="algo-name">堆排序</span>
-                        </button>
-                    </div> -->
+                        
+                        <!-- 右侧：10大排序算法网格 (2行5列) -->
+                        <div style="flex: 1; display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.5rem;">
+                            <!-- 第一行：基础冒泡类 & 归并快排类 (部分) -->
+                            <button class="algo-btn" onclick="window.location.href='../html/soft/Bub.html'">
+                                <span class="algo-icon">🫧</span>
+                                <span class="algo-name">冒泡 (Bub)</span>
+                            </button>
+                            <button class="algo-btn" onclick="window.location.href='../html/soft/Sel.html'">
+                                <span class="algo-icon">👆</span>
+                                <span class="algo-name">选择 (Sel)</span>
+                            </button>
+                            <button class="algo-btn" onclick="window.location.href='../html/soft/Ins.html'">
+                                <span class="algo-icon">📥</span>
+                                <span class="algo-name">插入 (Ins)</span>
+                            </button>
+                            <button class="algo-btn" onclick="window.location.href='../html/soft/Shell.html'">
+                                <span class="algo-icon">🐚</span>
+                                <span class="algo-name">希尔 (Shell)</span>
+                            </button>
+                            <button class="algo-btn" onclick="window.location.href='../html/soft/Mer.html'">
+                                <span class="algo-icon">🔀</span>
+                                <span class="algo-name">归并 (Mer)</span>
+                            </button>
+                            
+                            <!-- 第二行：归并快排类 (部分) & 堆基数类 -->
+                            <button class="algo-btn" onclick="window.location.href='../html/soft/Quick.html'">
+                                <span class="algo-icon">⚡</span>
+                                <span class="algo-name">快速 (Quick)</span>
+                            </button>
+                            <button class="algo-btn" onclick="window.location.href='../html/soft/Heap.html'">
+                                <span class="algo-icon">🏔️</span>
+                                <span class="algo-name">堆 (Heap)</span>
+                            </button>
+                            <button class="algo-btn" onclick="window.location.href='../html/soft/Cnt.html'">
+                                <span class="algo-icon">🔢</span>
+                                <span class="algo-name">计数 (Cnt)</span>
+                            </button>
+                            <button class="algo-btn" onclick="window.location.href='../html/soft/Bucket.html'">
+                                <span class="algo-icon">🪣</span>
+                                <span class="algo-name">桶 (Bucket)</span>
+                            </button>
+                            <button class="algo-btn" onclick="window.location.href='../html/soft/Rad.html'">
+                                <span class="algo-icon">📻</span>
+                                <span class="algo-name">基数 (Rad)</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="algo-category" id="searching">
-                    <h2 style="margin-bottom: 1rem;">查找算法</h2>
-                    <div class="algo-grid">
-                        <button class="algo-btn" data-algo="binarySearch">
-                            <span class="algo-icon">🔎</span>
-                            <span class="algo-name">二分查找</span>
+                <div class="algo-category">
+                    <div style="display: flex; align-items: stretch; gap: 1rem; margin-bottom: 1.5rem;">
+                        <button class="algo-btn active" style="flex-shrink: 0; display: flex; align-items: center; justify-content: center; min-width: 150px; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;" 
+                                onclick="window.location.href='../html/algo/Search.html'" 
+                                onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.15)';" 
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                            <span class="algo-name">
+                                <h2 style="margin: 0; color: black;">查找算法</h2>
+                            </span>
                         </button>
                     </div>
                 </div>
 
-                <div class="algo-category" id="tree-traversal">
-                    <h2 style="margin-bottom: 1rem;">递归/回溯</h2>
-                    <div class="algo-grid">
-                        <button class="algo-btn" data-algo="treeInorder">
-                            <span class="algo-icon">↔️</span>
-                            <span class="algo-name">中序遍历</span>
-                        </button>
-                        <button class="algo-btn" data-algo="treePreorder">
-                            <span class="algo-icon">➡️</span>
-                            <span class="algo-name">前序遍历</span>
-                        </button>
-                        <button class="algo-btn" data-algo="treePostorder">
-                            <span class="algo-icon">⬅️</span>
-                            <span class="algo-name">后序遍历</span>
+                <div class="algo-category">
+                    <div style="display: flex; align-items: stretch; gap: 1rem; margin-bottom: 1.5rem;">
+                        <button class="algo-btn active" style="flex-shrink: 0; display: flex; align-items: center; justify-content: center; min-width: 150px; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;" 
+                                onclick="window.location.href='../html/algo/Recur.html'" 
+                                onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.15)';" 
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                            <span class="algo-name">
+                                <h2 style="margin: 0; color: black;">递归回溯</h2>
+                            </span>
                         </button>
                     </div>
                 </div>
 
-                <div class="algo-category" id="graph-traversal">
-                    <h2 style="margin-bottom: 1rem;">动态规划</h2>
-                    <div class="algo-grid">
-                        <button class="algo-btn" data-algo="graphDFS">
-                            <span class="algo-icon">🧭</span>
-                            <span class="algo-name">深度优先 (DFS)</span>
-                        </button>
-                        <button class="algo-btn" data-algo="graphBFS">
-                            <span class="algo-icon">🌊</span>
-                            <span class="algo-name">广度优先 (BFS)</span>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="algo-category" id="dijkstra">
-                    <h2 style="margin-bottom: 1rem;">贪心算法</h2>
-                    <div class="algo-grid">
-                        <button class="algo-btn" data-algo="dijkstra">
-                            <span class="algo-icon">🛤️</span>
-                            <span class="algo-name">Dijkstra</span>
+                <div class="algo-category">
+                    <div style="display: flex; align-items: stretch; gap: 1rem; margin-bottom: 1.5rem;">
+                        <button class="algo-btn active" style="flex-shrink: 0; display: flex; align-items: center; justify-content: center; min-width: 150px; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;" 
+                                onclick="window.location.href='../html/algo/DP.html'" 
+                                onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.15)';" 
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                            <span class="algo-name">
+                                <h2 style="margin: 0; color: black;">动态规划</h2>
+                            </span>
                         </button>
                     </div>
                 </div>
 
-                <div class="algo-category" id="dijkstra">
-                    <h2 style="margin-bottom: 1rem;">搜索</h2>
-                    <div class="algo-grid">
-                        <button class="algo-btn" data-algo="dijkstra">
-                            <span class="algo-icon">🛤️</span>
-                            <span class="algo-name">Dijkstra</span>
+                <div class="algo-category">
+                    <div style="display: flex; align-items: stretch; gap: 1rem; margin-bottom: 1.5rem;">
+                        <button class="algo-btn active" style="flex-shrink: 0; display: flex; align-items: center; justify-content: center; min-width: 150px; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;" 
+                                onclick="window.location.href='../html/algo/Greedy.html'" 
+                                onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.15)';" 
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                            <span class="algo-name">
+                                <h2 style="margin: 0; color: black;">贪心算法</h2>
+                            </span>
                         </button>
                     </div>
                 </div>
 
-                <div class="algo-category" id="dijkstra">
-                    <h2 style="margin-bottom: 1rem;">字符串算法</h2>
-                    <div class="algo-grid">
-                        <button class="algo-btn" data-algo="dijkstra">
-                            <span class="algo-icon">🛤️</span>
-                            <span class="algo-name">Dijkstra</span>
+                <div class="algo-category">
+                    <div style="display: flex; align-items: stretch; gap: 1rem; margin-bottom: 1.5rem;">
+                        <button class="algo-btn active" style="flex-shrink: 0; display: flex; align-items: center; justify-content: center; min-width: 150px; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;" 
+                                onclick="window.location.href='../html/algo/GraphSrch.html'" 
+                                onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.15)';" 
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                            <span class="algo-name">
+                                <h2 style="margin: 0; color: black;">搜索</h2>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="algo-category">
+                    <div style="display: flex; align-items: stretch; gap: 1rem; margin-bottom: 1.5rem;">
+                        <button class="algo-btn active" style="flex-shrink: 0; display: flex; align-items: center; justify-content: center; min-width: 150px; cursor: pointer; transition: transform 0.3s ease, box-shadow 0.3s ease;" 
+                                onclick="window.location.href='../html/algo/Str.html'" 
+                                onmouseover="this.style.transform='translateY(-5px)'; this.style.boxShadow='0 8px 20px rgba(0,0,0,0.15)';" 
+                                onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                            <span class="algo-name">
+                                <h2 style="margin: 0; color: black;">字符串算法</h2>
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -505,7 +545,6 @@
     <script src="../js/algorithms/graph.js"></script>
     <script src="../js/algorithms/dijkstra.js"></script>
     <script src="../js/algorithms.js"></script>
-    <script src="../js/oj.js"></script>
 </body>
 
 </html>

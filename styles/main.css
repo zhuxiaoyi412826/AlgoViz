@@ -162,6 +162,12 @@ h4 { font-size: 1.25rem; }
     background-clip: text;
 }
 
+html[data-theme="light"] .nav-logo .text-gradient {
+    background: none;
+    -webkit-text-fill-color: #000;
+    color: #000;
+}
+
 /* ===================================
    Layout Components
    =================================== */
@@ -220,7 +226,12 @@ html[data-theme="light"] .nav {
     padding: var(--spacing-sm) 0;
     position: relative;
     font-weight: 500;
+    color: #000;
     transition: color var(--transition-fast);
+}
+
+html[data-theme="dark"] .nav-link {
+    color: var(--text-primary);
 }
 
 .nav-link::after {
@@ -294,12 +305,16 @@ html[data-theme="dark"] .theme-icon {
     display: flex;
     align-items: center;
     gap: 4px;
-    color: var(--primary);
+    color: #000;
     font-weight: 600;
     padding: 4px 12px;
     border-radius: 20px;
     background: rgba(102, 126, 234, 0.1);
     transition: all 0.2s;
+}
+
+html[data-theme="dark"] .nav-link.ai-link {
+    color: var(--primary-light);
 }
 
 .nav-link.ai-link:hover {

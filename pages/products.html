@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>商品 - AlgoViz</title>
+    <link rel="icon" type="image/png" href="../images/tubiao.png">
     <link rel="stylesheet" href="../styles/main.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -264,9 +265,6 @@
                 <a href="../pages/algorithms.html" class="nav-link">算法演示</a>
                 <a href="../pages/oj.html" class="nav-link">在线OJ</a>
                 <a href="../pages/products.html" class="nav-link active">商品</a>
-                <a href="javascript:void(0)" class="nav-link" id="profileLink">
-                    <span class="nav-avatar" id="navAvatar">👤</span>
-                </a>
                 <a href="../pages/ai.html" class="nav-link ai-link">
                     <span>✨</span> AI助手
                 </a>
@@ -278,6 +276,9 @@
                         <span class="theme-icon">☀️</span>
                     </div>
                 </button>
+                <a href="javascript:void(0)" class="nav-link" id="profileLink">
+                    <span class="nav-avatar" id="navAvatar">👤</span>
+                </a>
             </div>
         </div>
     </nav>
@@ -306,6 +307,15 @@
         // 访问量计数
         function updateVisitCount() {
             var count = localStorage.getItem('visitCount') || 0;
+            
+            // 检查当前浏览器是否已经记录过访问
+            var hasVisited = localStorage.getItem('hasVisitedUnique');
+            if (!hasVisited) {
+                count = parseInt(count) + 1;
+                localStorage.setItem('visitCount', count);
+                localStorage.setItem('hasVisitedUnique', 'true');
+            }
+            
             var visitCountElement = document.getElementById('visitCount');
             if (visitCountElement) {
                 visitCountElement.textContent = count;

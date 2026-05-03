@@ -897,6 +897,21 @@ body.light-theme .icon-moon {
   background: var(--primary);
 }
 
+/* 变量监控面板滚动条 */
+.variables-watch-panel::-webkit-scrollbar {
+  width: 6px;
+}
+.variables-watch-panel::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+.variables-watch-panel::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+.variables-watch-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-light);
+}
+
 .step-desc-hint {
   color: var(--text-muted);
   font-style: italic;

@@ -8,9 +8,9 @@ import com.algoviz.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class LoginServiceImpl implements LoginService {
@@ -18,23 +18,55 @@ public class LoginServiceImpl implements LoginService {
     @Autowired
     private UserService userService;
 
-    // 存储验证码，实际项目中应该使用Redis
-    private Map<String, String> verificationCodes = new HashMap<>();
+    // 存储验证码，Key: 验证码, Value: openId（为空说明还未扫码）
+    private Map<String, String> verificationCodes = new ConcurrentHashMap<>();
 
     @Override
     public LoginResponse login(LoginRequest request) {
-        LoginResponse response = new LoginResponse();
+        // 这个原有的 login 接口其实可以不用了，或者保留作备用
+        return checkLoginStatus(request.getVerificationCode());
+    }
 
-        // 验证验证码
-        if (!validateVerificationCode(request.getVerificationCode())) {
+    @Override
+    public String generateVerificationCode() {
+        // 生成6位数字验证码
+        String code = String.format("%06d", new Random().nextInt(999999));
+        // 存储验证码，初始 openId 为空
+        verificationCodes.put(code, "");
+        return code;
+    }
+
+    @Override
+    public boolean validateVerificationCode(String code) {
+        return verificationCodes.containsKey(code);
+    }
+
+    @Override
+    public boolean verifyCodeFromWechat(String code, String openId) {
+        if (verificationCodes.containsKey(code)) {
+            verificationCodes.put(code, openId);
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public LoginResponse checkLoginStatus(String code) {
+        LoginResponse response = new LoginResponse();
+        if (!verificationCodes.containsKey(code)) {
             response.setSuccess(false);
             response.setMessage("验证码无效或已过期");
             return response;
         }
 
-        // 模拟微信扫码登录，实际项目中应该调用微信API
-        // 这里简化处理，直接创建或获取用户
-        String openId = "mock_openid_" + System.currentTimeMillis();
+        String openId = verificationCodes.get(code);
+        if (openId == null || openId.isEmpty()) {
+            response.setSuccess(false);
+            response.setMessage("等待扫码");
+            return response;
+        }
+
+        // 已经扫码成功，进行登录或注册
         User user = userService.findByUsername(openId);
 
         if (user == null) {
@@ -45,15 +77,18 @@ public class LoginServiceImpl implements LoginService {
             user.setPassword(""); // 微信登录不需要密码
             user.setAvatar("👤");
             user.setGender("未知");
-            user.setNickname("用户" + new Random().nextInt(10000));
+            user.setNickname("微信用户" + new Random().nextInt(10000));
             user = userService.createUser(user);
         } else {
             // 更新最后登录时间
             userService.updateLastLogin(user.getId());
         }
 
+        // 验证通过，从map中移除
+        verificationCodes.remove(code);
+
         // 生成token（实际项目中应该使用JWT）
-        String token = "mock_token_" + System.currentTimeMillis();
+        String token = "wx_token_" + System.currentTimeMillis();
 
         // 构建响应
         response.setSuccess(true);
@@ -69,19 +104,5 @@ public class LoginServiceImpl implements LoginService {
         response.setUserInfo(userInfo);
 
         return response;
-    }
-
-    @Override
-    public String generateVerificationCode() {
-        // 生成6位数字验证码
-        String code = String.format("%06d", new Random().nextInt(999999));
-        // 存储验证码，实际项目中应该设置过期时间
-        verificationCodes.put(code, code);
-        return code;
-    }
-
-    @Override
-    public boolean validateVerificationCode(String code) {
-        return verificationCodes.containsKey(code);
     }
 }

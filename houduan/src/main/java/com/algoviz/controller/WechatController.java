@@ -1,14 +1,19 @@
 package com.algoviz.controller;
 
+import com.algoviz.service.LoginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/wx")
@@ -24,6 +29,9 @@ public class WechatController {
     @Value("${wechat.appsecret}")
     private String appsecret;
 
+    @Autowired
+    private LoginService loginService;
+
     /**
      * 微信公众号服务器验证接口
      * 微信服务器会发送GET请求验证服务器地址
@@ -37,18 +45,17 @@ public class WechatController {
             @RequestParam(value = "nonce", required = false) String nonce,
             @RequestParam(value = "echostr", required = false) String echostr) {
 
-        System.out.println("收到微信验证请求:");
+        System.out.println("收到微信验证请求: ");
         System.out.println("signature: " + signature);
         System.out.println("timestamp: " + timestamp);
         System.out.println("nonce: " + nonce);
         System.out.println("echostr: " + echostr);
+        System.out.println("token value: " + token);
 
-        // 验证请求来源
         if (checkSignature(signature, timestamp, nonce)) {
             System.out.println("验证成功!");
             return echostr;
         }
-
         System.out.println("验证失败!");
         return "验证失败";
     }
@@ -57,7 +64,7 @@ public class WechatController {
      * 接收微信公众号推送的消息
      * 微信服务器会发送POST请求推送用户消息
      */
-    @PostMapping("/callback")
+    @PostMapping(value = "/callback", produces = "application/xml;charset=UTF-8")
     @Operation(summary = "接收微信消息", description = "接收微信公众号推送的用户消息")
     public String handleMessage(
             @RequestParam(value = "signature", required = false) String signature,
@@ -65,20 +72,24 @@ public class WechatController {
             @RequestParam(value = "nonce", required = false) String nonce,
             @RequestBody String requestBody) {
 
-        System.out.println("收到微信消息:");
+        System.out.println("\n========== 收到微信POST消息 ==========");
         System.out.println("signature: " + signature);
         System.out.println("timestamp: " + timestamp);
         System.out.println("nonce: " + nonce);
-        System.out.println("body: " + requestBody);
+        System.out.println("requestBody: " + requestBody);
 
         // 验证请求来源
         if (!checkSignature(signature, timestamp, nonce)) {
-            System.out.println("消息验证失败!");
+            System.out.println("❌ 签名验证失败");
             return "error";
         }
 
+        System.out.println("✅ 签名验证成功，开始处理消息");
+
         // 处理消息并返回响应
-        return processMessage(requestBody);
+        String response = processMessage(requestBody);
+        System.out.println("响应消息: " + response);
+        return response;
     }
 
     /**
@@ -89,6 +100,8 @@ public class WechatController {
             return false;
         }
 
+        System.out.println("token value: " + token);
+        
         String[] arr = new String[]{token, timestamp, nonce};
         Arrays.sort(arr);
 
@@ -96,11 +109,14 @@ public class WechatController {
         for (String s : arr) {
             content.append(s);
         }
+        System.out.println("checkSignature str: " + content.toString());
 
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-1");
-            byte[] digest = md.digest(content.toString().getBytes());
+            byte[] digest = md.digest(content.toString().getBytes(StandardCharsets.UTF_8));
             String tmpStr = byteToStr(digest);
+            System.out.println("checkSignature calculated: " + tmpStr);
+            System.out.println("checkSignature expected: " + (signature != null ? signature.toUpperCase() : "null"));
             return tmpStr != null && tmpStr.equals(signature.toUpperCase());
         } catch (Exception e) {
             e.printStackTrace();
@@ -130,39 +146,83 @@ public class WechatController {
 
     /**
      * 处理接收到的消息
-     * 目前只是简单回复，后续可以根据实际需求完善
      */
-    private String processMessage(String requestBody) {
-        // 实际项目中，这里需要解析XML格式的消息
-        // 并根据消息类型进行相应的处理
+    private String processMessage(String xml) {
+        System.out.println("\n========== 开始解析消息 ==========");
+        System.out.println("原始XML: " + xml);
 
-        // 示例：如果是关注事件，返回欢迎消息
-        if (requestBody.contains("subscribe")) {
-            return buildTextMessage("welcome", "感谢关注AlgoViz！我们将为您提供优质的数据结构和算法学习体验。");
+        // 简单正则解析XML，实际项目中建议使用 dom4j 等库
+        String toUserName = extractXmlNode(xml, "ToUserName");
+        String fromUserName = extractXmlNode(xml, "FromUserName");
+        String msgType = extractXmlNode(xml, "MsgType");
+        String content = extractXmlNode(xml, "Content");
+
+        System.out.println("ToUserName: " + toUserName);
+        System.out.println("FromUserName: " + fromUserName);
+        System.out.println("MsgType: " + msgType);
+        System.out.println("Content: " + content);
+
+        if ("text".equals(msgType)) {
+            System.out.println("📝 收到文本消息");
+            if (content != null) {
+                content = content.trim();
+                System.out.println("处理后的Content: '" + content + "'");
+                
+                // 如果是6位数字验证码，尝试验证登录
+                if (content.matches("\\d{6}")) {
+                    System.out.println("🔢 检测到6位数字验证码: " + content);
+                    boolean success = loginService.verifyCodeFromWechat(content, fromUserName);
+                    System.out.println("验证结果: " + (success ? "成功" : "失败"));
+                    
+                    if (success) {
+                        return buildTextMessage(fromUserName, toUserName, "登录成功！欢迎来到AlgoViz数据结构与算法可视化学习平台。");
+                    } else {
+                        return buildTextMessage(fromUserName, toUserName, "验证码无效或已过期，请在网页上刷新验证码后重试。");
+                    }
+                } else {
+                    System.out.println("❌ 不是6位数字验证码");
+                }
+            }
+            return buildTextMessage(fromUserName, toUserName, "您可以输入网页上显示的6位数字验证码进行登录。");
         }
 
-        // 示例：如果是文本消息，返回帮助信息
-        if (requestBody.contains("msg type=\"text\"")) {
-            return buildTextMessage("text", "您可以输入以下命令：\n1. 输入\"帮助\"查看所有功能\n2. 输入\"课程\"查看课程列表\n3. 输入\"联系\"获取联系方式");
+        if ("event".equals(msgType)) {
+            String event = extractXmlNode(xml, "Event");
+            System.out.println("📅 收到事件消息: " + event);
+            if ("subscribe".equals(event)) {
+                return buildTextMessage(fromUserName, toUserName, "感谢关注AlgoViz！\n请输入网页上的6位数字验证码完成登录。");
+            }
         }
 
-        // 默认返回成功
+        System.out.println("⚠️ 未处理的消息类型");
         return "success";
+    }
+
+    private String extractXmlNode(String xml, String nodeName) {
+        Pattern pattern = Pattern.compile("<" + nodeName + "><!\\[CDATA\\[(.*?)\\]\\]></" + nodeName + ">");
+        Matcher matcher = pattern.matcher(xml);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        pattern = Pattern.compile("<" + nodeName + ">(.*?)</" + nodeName + ">");
+        matcher = pattern.matcher(xml);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return "";
     }
 
     /**
      * 构建文本消息XML
      */
-    private String buildTextMessage(String toUserName, String content) {
-        String fromUserName = "gh_demo"; // 示例
+    private String buildTextMessage(String toUserName, String fromUserName, String content) {
         long createTime = System.currentTimeMillis() / 1000;
-
-        return "<xml>" +
-                "<ToUserName><![CDATA[" + toUserName + "]]></ToUserName>" +
-                "<FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>" +
-                "<CreateTime>" + createTime + "</CreateTime>" +
-                "<MsgType><![CDATA[text]]></MsgType>" +
-                "<Content><![CDATA[" + content + "]]></Content>" +
+        return "<xml>\n" +
+                "<ToUserName><![CDATA[" + toUserName + "]]></ToUserName>\n" +
+                "<FromUserName><![CDATA[" + fromUserName + "]]></FromUserName>\n" +
+                "<CreateTime>" + createTime + "</CreateTime>\n" +
+                "<MsgType><![CDATA[text]]></MsgType>\n" +
+                "<Content><![CDATA[" + content + "]]></Content>\n" +
                 "</xml>";
     }
 

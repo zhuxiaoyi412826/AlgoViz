@@ -17,9 +17,10 @@ springdoc:
     enabled: true
 
 server:
-  port: 79
+  port: 80
 
 wechat:
-  token: algoviz_token
+  token: zhuxiaoyizxy123456789
   appid: wx82436d7e59251ede
   appsecret: 0f68f26ea80d9afcb3d6330accb66381
+  encoding-aes-key: LPaoICvbhN6wcB9F5xllgxMaMIe1xEcdmA0kLIscBIF

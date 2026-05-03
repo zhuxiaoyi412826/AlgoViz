@@ -3,6 +3,7 @@ com\algoviz\Application.class
 com\algoviz\dto\LoginResponse$UserInfo.class
 com\algoviz\controller\WechatController.class
 com\algoviz\service\impl\UserServiceImpl.class
+com\algoviz\config\CorsConfig.class
 com\algoviz\service\LoginService.class
 com\algoviz\service\impl\LoginServiceImpl.class
 com\algoviz\config\DatabaseInitializer.class

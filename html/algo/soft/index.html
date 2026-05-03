@@ -271,10 +271,6 @@
             <h4 class="aux-title">当前数组</h4>
             <div class="array-values" id="arrayValues"></div>
           </div>
-          <div class="aux-section" id="variablesDisplay">
-            <h4 class="aux-title">变量状态</h4>
-            <div class="variables" id="variables"></div>
-          </div>
           <div class="aux-section" id="stepDescription">
             <h4 class="aux-title">排序步骤</h4>
             <div class="step-desc-list" id="stepDescList">
@@ -308,17 +304,35 @@
         </div>
       </div>
 
-      <div class="footer-section code-section">
-        <div class="code-header">
-          <h4 class="footer-title">伪代码</h4>
-          <button class="btn-copy" id="copyCode" title="复制代码">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
-            </svg>
-          </button>
+      <div class="footer-section code-section" style="display: flex; gap: 20px;">
+        <div style="flex: 2; display: flex; flex-direction: column;">
+          <div class="code-header">
+            <h4 class="footer-title">伪代码</h4>
+            <button class="btn-copy" id="copyCode" title="复制代码">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"/>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+              </svg>
+            </button>
+          </div>
+          <pre class="code-block" id="codeBlock" style="flex: 1;"></pre>
         </div>
-        <pre class="code-block" id="codeBlock"></pre>
+        
+        <div style="flex: 1; display: flex; flex-direction: column; background: var(--bg-dark); border-radius: 8px; border: 1px solid var(--border); overflow: hidden;">
+          <div class="code-header" style="background: var(--bg-elevated); padding: 8px 12px; border-bottom: 1px solid var(--border);">
+            <h4 class="footer-title" style="margin: 0; color: var(--text-primary); display: flex; align-items: center; gap: 6px;">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="16" x2="12" y2="12"></line>
+                <line x1="12" y1="8" x2="12.01" y2="8"></line>
+              </svg>
+              Watch 监控区
+            </h4>
+          </div>
+          <div class="variables-watch-panel" id="variables" style="padding: 12px; display: flex; flex-direction: column; gap: 8px; overflow-y: auto; flex: 1;">
+            <div class="variable-hint" style="color:var(--text-secondary); font-size:0.85rem; font-style:italic;">点击播放查看变量...</div>
+          </div>
+        </div>
       </div>
 
       <div class="footer-section description-section">

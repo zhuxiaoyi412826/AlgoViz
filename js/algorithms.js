@@ -58,8 +58,13 @@ function initElements() {
 }
 
 // 初始化事件监听
-function initEventListeners() {
-    // 算法选择
+    function initEventListeners() {
+        // Variable Watch Update Event Listener
+        document.addEventListener('algoVariableUpdate', (e) => {
+            updateVariableWatch(e.detail);
+        });
+
+        // 算法选择
     if (elements.algoButtons) {
         elements.algoButtons.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -637,3 +642,17 @@ async function captureFrame(gif, element) {
         console.error('Frame capture failed:', e);
     }
 }
+
+// ���±���������
+function updateVariableWatch(variables) {
+    const panel = document.getElementById('variableWatchPanel');
+    if (!panel) return;
+    
+    let html = '<h4>�������</h4><div class="vars-grid">';
+    for (const [key, value] of Object.entries(variables)) {
+        html += <div class="var-item"><span class="var-name"></span>: <span class="var-value"></span></div>;
+    }
+    html += '</div>';
+    panel.innerHTML = html;
+}
+

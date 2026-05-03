@@ -30,6 +30,20 @@ function toggleTheme() {
 document.addEventListener('DOMContentLoaded', function() {
     initTheme();
     initAnimations();
+    
+    // Initialize profile click handling globally
+    const profileLink = document.getElementById('profileLink');
+    if (profileLink) {
+        profileLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            if (isLoggedIn) {
+                window.location.href = '/pages/profile.html';
+            } else {
+                window.location.href = '/pages/login.html';
+            }
+        });
+    }
 });
 
 function initAnimations() {

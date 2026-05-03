@@ -871,10 +871,14 @@ function highlightArrayValues(indices) {
 }
 
 function updateVariablesDisplay(variables) {
+  if (!variables || Object.keys(variables).length === 0) {
+    elements.variables.innerHTML = '<div class="variable-hint" style="color:var(--text-secondary); font-size:0.9rem; font-style:italic;">等待变量更新...</div>';
+    return;
+  }
   elements.variables.innerHTML = Object.entries(variables).map(([key, value]) => {
-    return `<div class="variable">
-      <span class="variable-name">${key} =</span>
-      <span class="variable-value">${value}</span>
+    return `<div class="variable" style="display: flex; justify-content: space-between; padding: 4px 8px; background: rgba(168,85,247,0.1); border-radius: 4px; margin-bottom: 4px; font-family: monospace;">
+      <span class="variable-name" style="color: var(--primary-light); font-weight: 600;">${key}</span>
+      <span class="variable-value" style="color: var(--text-primary); font-weight: bold;">${value}</span>
     </div>`;
   }).join('');
 }
@@ -1338,7 +1342,7 @@ function bubbleSortSteps(arr) {
       state.steps.push({
         type: 'compare',
         indices: [j, j + 1],
-        variables: { i, j, 'n-i-1': n - i - 1 }
+        variables: { i, j, [`arr[${j}]`]: arr[j], [`arr[${j+1}]`]: arr[j+1] }
       });
       
       if (arr[j] > arr[j + 1]) {
@@ -1347,7 +1351,8 @@ function bubbleSortSteps(arr) {
           i: j,
           j: j + 1,
           val1: arr[j + 1],
-          val2: arr[j]
+          val2: arr[j],
+          variables: { i, j, [`arr[${j}]`]: arr[j+1], [`arr[${j+1}]`]: arr[j] }
         });
         [arr[j], arr[j + 1]] = [arr[j + 1], arr[j]];
         swapped = true;
@@ -1373,7 +1378,7 @@ function selectionSortSteps(arr) {
       state.steps.push({
         type: 'compare',
         indices: [minIdx, j],
-        variables: { i, j, minIdx }
+        variables: { i, j, minIdx, [`arr[j]`]: arr[j], [`arr[minIdx]`]: arr[minIdx] }
       });
       
       if (arr[j] < arr[minIdx]) {
@@ -1387,7 +1392,8 @@ function selectionSortSteps(arr) {
         i: i,
         j: minIdx,
         val1: arr[minIdx],
-        val2: arr[i]
+        val2: arr[i],
+        variables: { i, minIdx, [`arr[i]`]: arr[minIdx], [`arr[minIdx]`]: arr[i] }
       });
       [arr[i], arr[minIdx]] = [arr[minIdx], arr[i]];
     }
@@ -1414,7 +1420,7 @@ function insertionSortSteps(arr) {
     state.steps.push({
       type: 'compare',
       indices: [j, i],
-      variables: { i, key }
+      variables: { i, key, j, [`arr[j]`]: arr[j] }
     });
     
     while (j >= 0 && arr[j] > key) {
@@ -1422,7 +1428,8 @@ function insertionSortSteps(arr) {
         type: 'move',
         from: j,
         to: j + 1,
-        value: arr[j]
+        value: arr[j],
+        variables: { i, key, j, [`arr[${j+1}]`]: arr[j] }
       });
       arr[j + 1] = arr[j];
       j--;
@@ -1431,7 +1438,7 @@ function insertionSortSteps(arr) {
         state.steps.push({
           type: 'compare',
           indices: [j, j + 1],
-          variables: { i, key, j }
+          variables: { i, key, j, [`arr[j]`]: arr[j] }
         });
       }
     }
@@ -1442,7 +1449,8 @@ function insertionSortSteps(arr) {
         type: 'move',
         from: i,
         to: j + 1,
-        value: key
+        value: key,
+        variables: { i, key, j, [`arr[${j+1}]`]: key }
       });
     }
     
@@ -1532,7 +1540,8 @@ function quickSortSteps(arr, low, high) {
         i: pivotIndex,
         j: high,
         val1: arr[high],
-        val2: arr[pivotIndex]
+        val2: arr[pivotIndex],
+        variables: { low, high, pivotIndex, [`arr[${high}]`]: arr[pivotIndex], [`arr[${pivotIndex}]`]: arr[high] }
       });
       [arr[pivotIndex], arr[high]] = [arr[high], arr[pivotIndex]];
       pivotIndex = high;
@@ -1540,7 +1549,8 @@ function quickSortSteps(arr, low, high) {
     
     state.steps.push({
       type: 'pivot',
-      index: pivotIndex
+      index: pivotIndex,
+      variables: { low, high, pivot: arr[pivotIndex] }
     });
     
     // 分区
@@ -1549,7 +1559,7 @@ function quickSortSteps(arr, low, high) {
       state.steps.push({
         type: 'compare',
         indices: [j, pivotIndex],
-        variables: { low, high, i, j, pivot: arr[pivotIndex] }
+        variables: { low, high, i, j, pivot: arr[pivotIndex], [`arr[${j}]`]: arr[j] }
       });
       
       if (arr[j] <= arr[pivotIndex]) {
@@ -1560,7 +1570,8 @@ function quickSortSteps(arr, low, high) {
             i: i,
             j: j,
             val1: arr[j],
-            val2: arr[i]
+            val2: arr[i],
+            variables: { i, j, [`arr[${i}]`]: arr[j], [`arr[${j}]`]: arr[i] }
           });
           [arr[i], arr[j]] = [arr[j], arr[i]];
         }
@@ -1574,7 +1585,8 @@ function quickSortSteps(arr, low, high) {
       i: pivotPos,
       j: high,
       val1: arr[high],
-      val2: arr[pivotPos]
+      val2: arr[pivotPos],
+      variables: { pivotPos, high, [`arr[${pivotPos}]`]: arr[high], [`arr[${high}]`]: arr[pivotPos] }
     });
     [arr[pivotPos], arr[high]] = [arr[high], arr[pivotPos]];
     
@@ -1620,7 +1632,7 @@ function mergeSteps(arr, left, mid, right) {
     state.steps.push({
       type: 'compare',
       indices: [left + i, mid + 1 + j],
-      variables: { left, mid, right, i, j }
+      variables: { left, mid, right, i, j, [`leftArr[${i}]`]: leftArr[i], [`rightArr[${j}]`]: rightArr[j] }
     });
     
     if (leftArr[i] <= rightArr[j]) {
@@ -1628,7 +1640,8 @@ function mergeSteps(arr, left, mid, right) {
         type: 'move',
         from: left + i,
         to: k,
-        value: leftArr[i]
+        value: leftArr[i],
+        variables: { k, i, [`arr[${k}]`]: leftArr[i] }
       });
       arr[k] = leftArr[i];
       i++;
@@ -1637,7 +1650,8 @@ function mergeSteps(arr, left, mid, right) {
         type: 'move',
         from: mid + 1 + j,
         to: k,
-        value: rightArr[j]
+        value: rightArr[j],
+        variables: { k, j, [`arr[${k}]`]: rightArr[j] }
       });
       arr[k] = rightArr[j];
       j++;
@@ -1692,7 +1706,8 @@ function heapSortSteps(arr) {
       i: 0,
       j: i,
       val1: arr[i],
-      val2: arr[0]
+      val2: arr[0],
+      variables: { i, [`arr[0]`]: arr[i], [`arr[${i}]`]: arr[0] }
     });
     [arr[0], arr[i]] = [arr[i], arr[0]];
     
@@ -1719,7 +1734,7 @@ function heapifySteps(arr, n, i) {
     state.steps.push({
       type: 'compare',
       indices: [largest, left],
-      variables: { i, largest, left, right }
+      variables: { i, largest, left, [`arr[${left}]`]: arr[left], [`arr[${largest}]`]: arr[largest] }
     });
     if (arr[left] > arr[largest]) {
       largest = left;
@@ -1730,7 +1745,7 @@ function heapifySteps(arr, n, i) {
     state.steps.push({
       type: 'compare',
       indices: [largest, right],
-      variables: { i, largest, left, right }
+      variables: { i, largest, right, [`arr[${right}]`]: arr[right], [`arr[${largest}]`]: arr[largest] }
     });
     if (arr[right] > arr[largest]) {
       largest = right;
@@ -1743,7 +1758,8 @@ function heapifySteps(arr, n, i) {
       i: i,
       j: largest,
       val1: arr[largest],
-      val2: arr[i]
+      val2: arr[i],
+      variables: { i, largest, [`arr[${i}]`]: arr[largest], [`arr[${largest}]`]: arr[i] }
     });
     [arr[i], arr[largest]] = [arr[largest], arr[i]];
     heapifySteps(arr, n, largest);

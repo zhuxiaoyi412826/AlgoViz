@@ -6,7 +6,12 @@ import com.algoviz.service.LoginService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/login")
@@ -17,7 +22,7 @@ public class LoginController {
     private LoginService loginService;
 
     @PostMapping
-    @Operation(summary = "登录", description = "通过验证码登录")
+    @Operation(summary = "登录", description = "通过验证码登录（兼容老版本接口）")
     public LoginResponse login(@RequestBody LoginRequest request) {
         return loginService.login(request);
     }
@@ -26,5 +31,11 @@ public class LoginController {
     @Operation(summary = "获取验证码", description = "生成登录验证码")
     public String getVerificationCode() {
         return loginService.generateVerificationCode();
+    }
+
+    @GetMapping("/check-status")
+    @Operation(summary = "检查登录状态", description = "轮询检查验证码是否被微信扫码确认")
+    public LoginResponse checkStatus(@RequestParam String code) {
+        return loginService.checkLoginStatus(code);
     }
 }

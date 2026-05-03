@@ -155,16 +155,24 @@ class SortingVisualizer {
             }
             this.render(step.highlights || {});
             this.updateStats();
+            
+            // Dispatch event for watch panel update
+            if (step.variables) {
+                const event = new CustomEvent('algoVariableUpdate', { detail: step.variables });
+                document.dispatchEvent(event);
+            }
+            
             if (this.onStepChange) this.onStepChange(step);
         }
     }
 
     // 记录步骤
-    recordStep(data, highlights = {}, stats = null) {
+    recordStep(data, highlights = {}, stats = null, variables = {}) {
         this.steps.push({
             data: [...data],
             highlights,
-            stats: stats ? { ...stats } : { ...this.stats }
+            stats: stats ? { ...stats } : { ...this.stats },
+            variables: variables
         });
     }
 
@@ -200,7 +208,13 @@ class SortingVisualizer {
                 this.recordStep(arr, {
                     comparing: [j, j + 1],
                     current: j
-                }, this.stats);
+                }, this.stats, {
+                    'i': i,
+                    'j': j,
+                    [`arr[${j}]`]: arr[j],
+                    [`arr[${j+1}]`]: arr[j + 1],
+                    'swapped': swapped
+                });
                 
                 if (arr[j] > arr[j + 1]) {
                     this.stats.swaps++;
@@ -210,14 +224,24 @@ class SortingVisualizer {
                     // 记录交换步骤
                     this.recordStep(arr, {
                         swapping: [j, j + 1]
-                    }, this.stats);
+                    }, this.stats, {
+                        'i': i,
+                        'j': j,
+                        [`arr[${j}]`]: arr[j],
+                        [`arr[${j+1}]`]: arr[j + 1],
+                        'swapped': swapped,
+                        'Action': 'Swap!'
+                    });
                 }
             }
             
             // 标记已排序
             this.recordStep(arr, {
                 sorted: [n - 1 - i]
-            }, this.stats);
+            }, this.stats, {
+                'i': i,
+                'swapped': swapped
+            });
             
             if (!swapped) break;
         }
@@ -225,7 +249,9 @@ class SortingVisualizer {
         // 标记全部有序
         this.recordStep(arr, {
             sorted: arr.map((_, i) => i)
-        }, this.stats);
+        }, this.stats, {
+            'Status': 'Sorted'
+        });
         
         this.stepForward();
     }

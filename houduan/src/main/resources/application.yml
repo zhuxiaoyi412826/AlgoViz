@@ -17,7 +17,7 @@ springdoc:
     enabled: true
 
 server:
-  port: 80
+  port: 8080
 
 wechat:
   token: zhuxiaoyizxy123456789

@@ -477,7 +477,7 @@ public class AdminController {
         appUserMapper.update(user);
         return ApiResponse.success(appUserMapper.findById(id));
     }
-
+// 1
     @DeleteMapping("/admin/user/{id}")
     public ApiResponse<Void> deleteUser(@PathVariable String id) {
         boolean success = appUserMapper.deleteById(id) > 0;

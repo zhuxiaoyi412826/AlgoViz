@@ -31,6 +31,13 @@ const handleLogin = async () => {
 
     loading.value = true
     try {
+      // 账号密码校验
+      if (formData.username !== 'admin' || formData.password !== 'admin123') {
+        ElMessage.error('用户名或密码错误，请输入 admin/admin123')
+        loading.value = false
+        return
+      }
+
       // 模拟登录
       await new Promise(resolve => setTimeout(resolve, 1000))
 

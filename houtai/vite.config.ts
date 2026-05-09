@@ -33,5 +33,10 @@ export default defineConfig({
         rewrite: (path) => path
       }
     }
+  },
+  base: './',
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets'
   }
 })

@@ -63,5 +63,6 @@ D:\1\算法数据结构可视化\AlgoVize\houduan\src\main\java\com\algoviz\enti
 D:\1\算法数据结构可视化\AlgoVize\houduan\src\main\java\com\algoviz\config\DatabaseInitializer.java
 D:\1\算法数据结构可视化\AlgoVize\houduan\src\main\java\com\algoviz\entity\User.java
 D:\1\算法数据结构可视化\AlgoVize\houduan\src\main\java\com\algoviz\controller\UserController.java
+D:\1\算法数据结构可视化\AlgoVize\houduan\src\main\java\com\algoviz\config\WebConfig.java
 D:\1\算法数据结构可视化\AlgoVize\houduan\src\main\java\com\algoviz\aspect\ApiLogAspect.java
 D:\1\算法数据结构可视化\AlgoVize\houduan\src\main\java\com\algoviz\mapper\OrderMapper.java

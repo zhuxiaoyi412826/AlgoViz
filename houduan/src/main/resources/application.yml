@@ -30,17 +30,4 @@ springdoc:
 server:
   port: 80
 
-wechat:
-  token: zhuxiaoyizxy123456789
-  appid: wx82436d7e59251ede
-  appsecret: 0f68f26ea80d9afcb3d6330accb66381
-  encoding-aes-key: LPaoICvbhN6wcB9F5xllgxMaMIe1xEcdmA0kLIscBIF
-  pay:
-    appid: wx8834aa7ba60f283d
-    mch-id: 1111047407
-    mch-shortname: 亚茹
-    api-v3-key: zhuxiaoyi1234567890ZHUXIAOYI1234
-    cert-path: classpath:cert/apiclient_cert.pem
-    private-key-path: classpath:cert/apiclient_key.pem
-    cert-serial-no: 576B13569E2D30856E8A8017D496FE1BF072EEC0
-    notify-url: https://dsaol.asia/api/payment/callback
+

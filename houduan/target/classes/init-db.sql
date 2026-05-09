@@ -51,6 +51,8 @@ CREATE TABLE IF NOT EXISTS orders (
 REPLACE INTO product (product_id, product_name, description, price, category, icon) VALUES
 ('notes-basic', '算法基础笔记', '包含常见数据结构和算法的详细笔记，适合初学者', 2990, 'notes', '📝'),
 ('notes-advanced', '高级算法笔记', '包含高级算法和复杂数据结构的深入解析', 4990, 'notes', '📚'),
+('notes-md', 'MD算法笔记', 'Markdown格式的算法学习笔记，适合快速查阅和学习', 1, 'notes', '📘'),
+('notes-javase', 'JavaSE笔记', 'JavaSE核心知识点总结，包含面向对象、集合框架等', 1, 'notes', '☕'),
 ('tutorial-basic', '算法入门教程', '零基础入门算法，包含视频讲解和实战练习', 9990, 'tutorial', '🎓'),
 ('tutorial-advanced', '算法进阶教程', '针对面试和竞赛的高级算法教程', 14990, 'tutorial', '🚀'),
 ('project-basic', '算法可视化项目', '基于AlgoVize的算法可视化项目源码', 19990, 'project', '💻'),

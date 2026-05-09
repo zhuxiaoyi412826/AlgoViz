@@ -2,8 +2,10 @@
 
 ## 项目概览
 
-AlgoViz 是一个交互式的数据结构和算法可视化学习网站，帮助用户通过动画深入理解常见数据结构和经典算法的执行过程。  
-**访问地址**:https://dsaol.asia/
+AlgoViz 是一个交互式的数据结构和算法可视化学习网站，帮助用户通过动画深入理解常见数据结构和经典算法的执行过程。\
+**访问地址**:<https://dsaol.asia/>
+
+后台管理访问地址:[https://dsaol.asia/houtai](https://dsaol.asia/)
 
 ## 技术栈
 
@@ -91,10 +93,8 @@ AlgoViz 是一个交互式的数据结构和算法可视化学习网站，帮助
    - 快速排序 (Quick Sort)
    - 归并排序 (Merge Sort)
    - 堆排序 (Heap Sort)
-
 2. **查找算法**:
    - 二分查找 (Binary Search)
-
 3. **遍历算法**:
    - 树的遍历 (前序、中序、后序、层序)
    - 图的遍历 (DFS、BFS)
@@ -141,7 +141,7 @@ AlgoViz 是一个交互式的数据结构和算法可视化学习网站，帮助
 3. **启动 Tomcat**：进入 Tomcat 的 `bin` 目录，运行 `startup.bat` (Windows) 或 `startup.sh` (Mac/Linux)。
 4. **访问**：在浏览器中打开 `http://localhost:8080/` 即可访问前端页面。
 
-*(注意：如果你将项目放在 `webapps/algoviz/` 目录下，访问路径将变为 `http://localhost:8080/algoviz/`)*
+*(注意：如果你将项目放在* *`webapps/algoviz/`* *目录下，访问路径将变为* *`http://localhost:8080/algoviz/`)*
 
 ## 访问地址
 
@@ -161,6 +161,7 @@ AlgoViz 是一个交互式的数据结构和算法可视化学习网站，帮助
 ## 新增功能 (交互体验优化)
 
 ### 🤖 智能 AI 助手 (DeepSeek)
+
 - **多轮对话管理**: 左侧侧边栏支持创建新对话和历史记录切换。
 - **强大的代码支持**: 支持代码块语言高亮识别，提供一键复制功能。
 - **实时流式输出**: 接入真实的 DeepSeek 接口，支持打字机效果及生成中断。
@@ -218,3 +219,4 @@ AlgoViz 是一个交互式的数据结构和算法可视化学习网站，帮助
 - 在线OJ: `https://dsaol.asia/pages/oj.html`
 - AI 助手: `https://dsaol.asia/pages/ai.html`
 - 后端API: `https://dsaol.asia:3000/api/`
+

@@ -8,6 +8,11 @@ import org.springframework.context.annotation.Configuration;
 public class WechatPayConfig {
     
     /**
+     * 公众号ID/小程序ID
+     */
+    private String appid;
+    
+    /**
      * 商户号
      */
     private String mchId;
@@ -41,6 +46,14 @@ public class WechatPayConfig {
      * 通知地址
      */
     private String notifyUrl;
+    
+    public String getAppid() {
+        return appid;
+    }
+    
+    public void setAppid(String appid) {
+        this.appid = appid;
+    }
     
     public String getMchId() {
         return mchId;

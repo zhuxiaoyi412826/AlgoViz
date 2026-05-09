@@ -10,6 +10,7 @@ dist
 *.zip
 *.tar
 *.txt
+*.pem
 .git/*
 __pycache__/
 *.pyc

@@ -393,6 +393,14 @@
                         <button class="product-button" onclick="openPaymentModal('notes-advanced')">购买</button>
                     </div>
                     
+                    <div class="product-card" data-category="notes" data-product="notes-javase">
+                        <div class="product-icon">☕️</div>
+                        <h3 class="product-title">JavaSE笔记</h3>
+                        <p class="product-description">JavaSE核心知识点总结，包含面向对象、集合框架等</p>
+                        <div class="product-price">¥0.01</div>
+                        <button class="product-button" onclick="openPaymentModal('notes-javase')">购买</button>
+                    </div>
+                    
                     <!-- 教程类商品 -->
                     <div class="product-card" data-category="tutorial" data-product="tutorial-basic">
                         <div class="product-icon">🎓</div>
@@ -490,26 +498,35 @@
         let currentOrderId = null;
         let pollInterval = null;
         
-        // 获取API基础URL
+        // 获取API基础URL - 通过CORS代理访问后端
         function getApiBaseUrl() {
             var protocol = window.location.protocol;
-            var host = window.location.hostname || 'localhost';
+            var host = window.location.hostname || 'dsaol.asia';
             
+            // 通过CORS代理访问后端，代理会转发请求到后端HTTP服务
+            // CORS代理运行在端口3000，处理HTTPS到HTTP的转发
             if (protocol === 'https:') {
                 return 'https://' + host + ':3000';
             } else {
+                // 开发环境直接访问后端
                 return 'http://' + host + ':80';
             }
         }
         
         // 打开支付模态框
         async function openPaymentModal(product) {
+            console.log('========== 开始创建订单 ==========');
+            console.log('商品ID:', product);
+            
             currentProduct = product;
             document.getElementById('paymentModal').style.display = 'flex';
             
             try {
+                var apiUrl = getApiBaseUrl() + '/api/payment/order';
+                console.log('API地址:', apiUrl);
+                
                 // 调用后端API创建订单
-                var response = await fetch(getApiBaseUrl() + '/api/payment/order', {
+                var response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -517,10 +534,15 @@
                     body: JSON.stringify({ productId: product })
                 });
                 
+                console.log('HTTP状态码:', response.status);
+                
                 var result = await response.json();
+                console.log('API响应:', JSON.stringify(result, null, 2));
                 
                 if (result.success) {
                     currentOrderId = result.orderId;
+                    console.log('订单创建成功，订单ID:', currentOrderId);
+                    console.log('二维码内容:', result.qrCodeText);
                     
                     // 更新模态框信息
                     updatePaymentModal(result);
@@ -531,11 +553,12 @@
                     // 开始轮询订单状态
                     startPolling(result.orderId);
                 } else {
+                    console.error('创建订单失败:', result.message);
                     alert('创建订单失败：' + result.message);
                     closeModal();
                 }
             } catch (error) {
-                console.error('创建订单失败：', error);
+                console.error('创建订单异常:', error);
                 alert('创建订单失败，请稍后重试');
                 closeModal();
             }
@@ -578,6 +601,74 @@
             currentOrderId = null;
         }
         
+        // 显示支付成功弹窗
+        function showPaymentSuccess() {
+            // 创建成功提示弹窗
+            var successModal = document.createElement('div');
+            successModal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.6);
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                z-index: 10000;
+                animation: fadeIn 0.3s ease;
+            `;
+            
+            var successContent = document.createElement('div');
+            successContent.style.cssText = `
+                background: white;
+                border-radius: 16px;
+                padding: 40px 50px;
+                text-align: center;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                animation: scaleIn 0.4s ease;
+                min-width: 320px;
+            `;
+            
+            successContent.innerHTML = `
+                <style>
+                    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+                    @keyframes scaleIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+                    @keyframes bounce { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+                    .success-icon { font-size: 64px; animation: bounce 0.6s ease; display: block; margin-bottom: 20px; }
+                    .success-title { font-size: 24px; font-weight: bold; color: #333; margin-bottom: 10px; }
+                    .success-desc { font-size: 14px; color: #666; margin-bottom: 30px; }
+                    .success-btn { 
+                        background: linear-gradient(135deg, #52c41a 0%, #389e0d 100%);
+                        color: white;
+                        border: none;
+                        padding: 12px 40px;
+                        border-radius: 30px;
+                        font-size: 16px;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                    }
+                    .success-btn:hover { 
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 15px rgba(82, 196, 26, 0.4);
+                    }
+                </style>
+                <div class="success-icon">🎉</div>
+                <div class="success-title">微信支付完成</div>
+                <div class="success-desc">感谢您的购买，订单已成功支付！</div>
+                <button class="success-btn" onclick="closeSuccessModal()">确定</button>
+            `;
+            
+            successModal.appendChild(successContent);
+            document.body.appendChild(successModal);
+            
+            window.closeSuccessModal = function() {
+                successModal.remove();
+                closeModal();
+                window.location.href = '../index.html';
+            };
+        }
+        
         // 开始轮询订单状态
         function startPolling(orderId) {
             if (pollInterval) {
@@ -597,11 +688,8 @@
                             clearInterval(pollInterval);
                             pollInterval = null;
                             
-                            alert('支付成功！感谢您的购买');
-                            closeModal();
-                            
-                            // 可以刷新页面或跳转到其他页面
-                            window.location.href = '../index.html';
+                            // 显示支付成功弹窗
+                            showPaymentSuccess();
                         }
                     }
                 } catch (error) {
@@ -630,7 +718,13 @@
                 var result = await response.json();
                 
                 if (result.success) {
-                    alert('模拟支付成功！');
+                    // 清除轮询
+                    if (pollInterval) {
+                        clearInterval(pollInterval);
+                        pollInterval = null;
+                    }
+                    // 显示支付成功弹窗
+                    showPaymentSuccess();
                 }
             } catch (error) {
                 console.error('模拟支付失败：', error);

@@ -104,15 +104,28 @@ public class PaymentController {
      */
     @PostMapping("/callback")
     @Operation(summary = "支付回调", description = "微信支付回调通知接口")
-    public Map<String, Object> paymentCallback(@RequestBody String jsonData) {
-        logger.info("收到支付回调：{}", jsonData);
+    public Map<String, Object> paymentCallback(@RequestBody(required = false) String jsonData,
+                                               @RequestHeader Map<String, String> headers) {
+        logger.info("========== 收到支付回调请求 ==========");
+        logger.info("请求头信息：");
+        headers.forEach((key, value) -> {
+            logger.info("  {}: {}", key, value);
+        });
+        
+        if (jsonData == null || jsonData.isEmpty()) {
+            logger.warn("回调请求体为空");
+        } else {
+            logger.info("回调请求体长度：{} 字符", jsonData.length());
+            logger.info("回调请求体内容：{}", jsonData);
+        }
         
         try {
-            paymentService.handlePaymentCallback(jsonData);
+            paymentService.handlePaymentCallback(jsonData != null ? jsonData : "");
             
             Map<String, Object> result = new HashMap<>();
             result.put("code", "SUCCESS");
             result.put("message", "成功");
+            logger.info("支付回调处理成功，返回SUCCESS");
             return result;
         } catch (Exception e) {
             logger.error("处理支付回调失败：", e);

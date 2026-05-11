@@ -50,4 +50,26 @@ public interface OrderMapper {
      * 删除订单
      */
     int deleteOrder(@Param("orderId") String orderId);
+    
+    /**
+     * 获取所有订单（含用户信息）
+     */
+    List<Order> getOrdersWithUserInfo();
+    
+    /**
+     * 根据退款状态获取订单
+     */
+    List<Order> getOrdersByRefundStatus(@Param("refundStatus") String refundStatus);
+    
+    /**
+     * 更新退款状态
+     */
+    int updateRefundStatus(@Param("orderId") String orderId, 
+                           @Param("refundStatus") String refundStatus,
+                           @Param("refundReason") String refundReason);
+    
+    /**
+     * 完成退款
+     */
+    int completeRefund(@Param("orderId") String orderId);
 }

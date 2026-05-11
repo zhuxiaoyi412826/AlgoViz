@@ -142,6 +142,21 @@ const routes: RouteRecordRaw[] = [
           }
         ]
       },
+      // 订单管理模块
+      {
+        path: 'order',
+        name: 'Order',
+        redirect: '/order/list',
+        meta: { title: '订单管理', icon: 'ShoppingCart' },
+        children: [
+          {
+            path: 'list',
+            name: 'OrderList',
+            component: () => import('@/views/order/OrderList.vue'),
+            meta: { title: '订单列表' }
+          }
+        ]
+      },
       // 数据统计模块
       {
         path: 'statistics',

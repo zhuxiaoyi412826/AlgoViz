@@ -47,6 +47,32 @@ CREATE TABLE IF NOT EXISTS orders (
     FOREIGN KEY (user_id) REFERENCES user(id)
 );
 
+-- 创建OJ题目表
+CREATE TABLE IF NOT EXISTS oj_problem (
+    id TEXT PRIMARY KEY,
+    problem_no TEXT UNIQUE NOT NULL,
+    title TEXT NOT NULL,
+    difficulty TEXT DEFAULT 'easy',
+    tags TEXT,
+    description TEXT,
+    template TEXT,
+    status TEXT DEFAULT 'ACTIVE',
+    submission_count INTEGER DEFAULT 0,
+    ac_rate REAL DEFAULT 0.0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 插入测试题目数据
+REPLACE INTO oj_problem (id, problem_no, title, difficulty, tags, description, template) VALUES
+('1', '1001', '两数之和', 'easy', '数组,哈希表', '给定一个整数数组 nums 和一个整数目标值 target，请你在该数组中找出和为目标值 target 的那两个整数，并返回它们的数组下标。', 'class Solution {\n    public int[] twoSum(int[] nums, int target) {\n        // 在此处编写你的代码\n        return new int[0];\n    }\n}'),
+('2', '1002', '合并两个有序链表', 'easy', '链表,递归', '将两个升序链表合并为一个新的升序链表并返回。新链表是通过拼接给定的两个链表的所有节点组成的。', 'class Solution {\n    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {\n        // 在此处编写你的代码\n        return null;\n    }\n}'),
+('3', '1003', '有效的括号', 'easy', '栈,字符串', '给定一个只包括 ()，{}，[] 的字符串 s ，判断字符串是否有效。', 'class Solution {\n    public boolean isValid(String s) {\n        // 在此处编写你的代码\n        return false;\n    }\n}'),
+('4', '2001', '买卖股票最佳时机', 'medium', '数组,动态规划', '给定一个数组 prices ，它的第 i 个元素 prices[i] 表示一支给定股票第 i 天的价格。你只能选择某一天买入这只股票，并选择在未来的某一个不同的日子卖出该股票。设计一个算法来计算你所能获取的最大利润。', 'class Solution {\n    public int maxProfit(int[] prices) {\n        // 在此处编写你的代码\n        return 0;\n    }\n}'),
+('5', '2002', '全排列', 'medium', '回溯', '给定一个不含重复数字的数组 nums ，返回其所有可能的全排列。你可以按任意顺序返回答案。', 'class Solution {\n    public List<List<Integer>> permute(int[] nums) {\n        // 在此处编写你的代码\n        return new ArrayList<>();\n    }\n}'),
+('6', '3001', '最长公共子序列', 'hard', '动态规划', '给定两个字符串 text1 和 text2，返回这两个字符串的最长公共子序列的长度。', 'class Solution {\n    public int longestCommonSubsequence(String text1, String text2) {\n        // 在此处编写你的代码\n        return 0;\n    }\n}'),
+('7', '3002', '滑动窗口最大值', 'hard', '队列,滑动窗口', '给你一个整数数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位。返回滑动窗口中的最大值。', 'class Solution {\n    public int[] maxSlidingWindow(int[] nums, int k) {\n        // 在此处编写你的代码\n        return new int[0];\n    }\n}');
+
 -- 插入商品测试数据（使用REPLACE避免重复插入）
 REPLACE INTO product (product_id, product_name, description, price, category, icon) VALUES
 ('notes-basic', '算法基础笔记', '包含常见数据结构和算法的详细笔记，适合初学者', 2990, 'notes', '📝'),

@@ -16,6 +16,11 @@ public class Order {
     private LocalDateTime createTime;
     private LocalDateTime payTime;
     private LocalDateTime updateTime;
+    private String refundStatus;
+    private LocalDateTime refundTime;
+    private String refundReason;
+    private String username;
+    private String email;
     
     public Order() {
     }
@@ -114,5 +119,45 @@ public class Order {
     
     public void setUpdateTime(LocalDateTime updateTime) {
         this.updateTime = updateTime;
+    }
+    
+    public String getRefundStatus() {
+        return refundStatus;
+    }
+    
+    public void setRefundStatus(String refundStatus) {
+        this.refundStatus = refundStatus;
+    }
+    
+    public LocalDateTime getRefundTime() {
+        return refundTime;
+    }
+    
+    public void setRefundTime(LocalDateTime refundTime) {
+        this.refundTime = refundTime;
+    }
+    
+    public String getRefundReason() {
+        return refundReason;
+    }
+    
+    public void setRefundReason(String refundReason) {
+        this.refundReason = refundReason;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+    
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    
+    public String getEmail() {
+        return email;
+    }
+    
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

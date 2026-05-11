@@ -17,6 +17,9 @@
         <result column="create_time" property="createTime" />
         <result column="pay_time" property="payTime" />
         <result column="update_time" property="updateTime" />
+        <result column="refund_status" property="refundStatus" />
+        <result column="refund_time" property="refundTime" />
+        <result column="refund_reason" property="refundReason" />
     </resultMap>
     
     <select id="getOrderById" resultMap="OrderResultMap">
@@ -60,4 +63,45 @@
     <delete id="deleteOrder">
         DELETE FROM orders WHERE order_id = #{orderId}
     </delete>
+    
+    <select id="getOrdersWithUserInfo" resultMap="OrderResultMap">
+        SELECT o.*, u.username, u.email 
+        FROM orders o LEFT JOIN user u ON o.user_id = u.id 
+        ORDER BY o.create_time DESC
+    </select>
+    
+    <select id="getOrdersByRefundStatus" resultMap="OrderResultMap">
+        SELECT o.*, u.username, u.email 
+        FROM orders o LEFT JOIN user u ON o.user_id = u.id 
+        WHERE o.refund_status = #{refundStatus} 
+        ORDER BY o.create_time DESC
+    </select>
+    
+    <update id="updateRefundStatus">
+        UPDATE orders SET 
+            refund_status = #{refundStatus},
+            refund_reason = #{refundReason},
+            update_time = CURRENT_TIMESTAMP
+        WHERE order_id = #{orderId}
+    </update>
+    
+    <update id="completeRefund">
+        UPDATE orders SET 
+            refund_status = 'REFUNDED',
+            refund_time = CURRENT_TIMESTAMP,
+            update_time = CURRENT_TIMESTAMP
+        WHERE order_id = #{orderId}
+    </update>
+    
+    <select id="countOrdersByStatus">
+        SELECT status, COUNT(*) as count FROM orders GROUP BY status
+    </select>
+    
+    <select id="countOrdersByRefundStatus">
+        SELECT refund_status, COUNT(*) as count FROM orders GROUP BY refund_status
+    </select>
+    
+    <select id="sumAmountByStatus">
+        SELECT status, SUM(amount) as total FROM orders GROUP BY status
+    </select>
 </mapper>

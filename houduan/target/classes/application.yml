@@ -43,4 +43,5 @@ wechat:
     cert-path: classpath:cert/apiclient_cert.pem
     private-key-path: classpath:cert/apiclient_key.pem
     cert-serial-no: 576B13569E2D30856E8A8017D496FE1BF072EEC0
-    notify-url: https://dsaol.asia/api/payment/callback
+    notify-url: http://dsaol.asia/api/payment/callback
+    #notify-url: https://dsaol.asia/api/payment/callback

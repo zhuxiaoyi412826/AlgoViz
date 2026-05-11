@@ -2,8 +2,52 @@
  * Online Judge - 前端逻辑
  */
 
-// 题目数据
-const OJ_PROBLEMS = [
+// 题目数据（从后端获取）
+let OJ_PROBLEMS = [];
+
+// API基础地址
+const API_BASE = 'http://dsaol.asia/api';
+
+// 从后端获取题目列表
+async function loadProblems() {
+    try {
+        const response = await fetch(`${API_BASE}/problems`);
+        const data = await response.json();
+        
+        if (data.success && data.problems) {
+            // 转换后端数据格式
+            OJ_PROBLEMS = data.problems.map(problem => ({
+                id: parseInt(problem.problemNo),
+                title: problem.title,
+                difficulty: problem.difficulty,
+                tags: problem.tags ? problem.tags.split(',') : [],
+                description: problem.description,
+                inputFormat: '',
+                outputFormat: '',
+                sampleInput: '',
+                sampleOutput: '',
+                templateCode: {
+                    java: problem.template || '',
+                    python: '',
+                    cpp: '',
+                    javascript: ''
+                },
+                testCases: []
+            }));
+            
+            // 更新题目列表显示
+            renderProblemList();
+        }
+    } catch (error) {
+        console.error('加载题目失败:', error);
+        // 使用默认测试数据
+        OJ_PROBLEMS = getDefaultProblems();
+    }
+}
+
+// 默认题目数据（备用）
+function getDefaultProblems() {
+    return [
     {
         id: 1001,
         title: "两数之和",
@@ -639,12 +683,19 @@ const OJState = {
 };
 
 // 初始化 OJ
-function initOJ() {
+async function initOJ() {
+    // 先从后端加载题目
+    await loadProblems();
+    
     initModeTabs();
     initProblemList();
     initEditor();
     initOJControls();
-    selectProblem(OJ_PROBLEMS[0]);
+    
+    // 如果有题目，选择第一个
+    if (OJ_PROBLEMS.length > 0) {
+        selectProblem(OJ_PROBLEMS[0]);
+    }
 }
 
 // 初始化模式切换

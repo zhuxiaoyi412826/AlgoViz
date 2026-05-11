@@ -11,6 +11,7 @@ dist
 *.tar
 *.txt
 *.pem
+*.yml
 .git/*
 __pycache__/
 *.pyc

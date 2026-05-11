@@ -74,28 +74,35 @@ onMounted(() => {
 const loadData = async () => {
   loading.value = true
   try {
-    await new Promise(resolve => setTimeout(resolve, 500))
-    tableData.value = [
-      {
-        id: '1', problemNo: 'P001', title: '两数之和', difficulty: 'easy',
-        tags: ['数组', '查找'], description: '给定一个整数数组 nums 和一个整数目标值 target...',
-        template: { python: 'class Solution:\n    def twoSum(self, nums, target):\n        pass', java: 'class Solution {\n    public int[] twoSum(int[] nums, int target) {\n    }\n}' },
-        status: 'online', submissionCount: 1256, acRate: 68.5, createTime: '2024-01-01', updateTime: '2024-01-15'
-      },
-      {
-        id: '2', problemNo: 'P002', title: '二叉树层序遍历', difficulty: 'medium',
-        tags: ['树', 'BFS'], description: '给你一个二叉树根节点 root ，返回其节点值的层序遍历...',
-        template: { python: 'def levelOrder(root):\n    pass' },
-        status: 'online', submissionCount: 856, acRate: 52.3, createTime: '2024-01-10', updateTime: '2024-01-20'
-      },
-      {
-        id: '3', problemNo: 'P003', title: '正则表达式匹配', difficulty: 'hard',
-        tags: ['字符串', '动态规划'], description: '给你一个字符串 s 和一个字符规律 p，请你来实现支持...',
-        template: {},
-        status: 'offline', submissionCount: 234, acRate: 28.6, createTime: '2024-02-01', updateTime: '2024-02-01'
-      }
-    ]
-    total.value = 3
+    const params = new URLSearchParams()
+    if (searchForm.keyword) params.append('keyword', searchForm.keyword)
+    if (searchForm.difficulty) params.append('difficulty', searchForm.difficulty)
+    
+    const response = await fetch(`http://dsaol.asia/api/problems?${params.toString()}`)
+    const data = await response.json()
+    
+    if (data.success) {
+      tableData.value = data.problems.map((item: any) => ({
+        id: item.id,
+        problemNo: item.problemNo,
+        title: item.title,
+        difficulty: item.difficulty,
+        tags: item.tags ? item.tags.split(',') : [],
+        description: item.description,
+        template: { java: item.template || '' },
+        status: item.status === 'ACTIVE' ? 'online' : 'offline',
+        submissionCount: item.submissionCount || 0,
+        acRate: item.acRate || 0,
+        createTime: item.createdAt,
+        updateTime: item.updatedAt
+      }))
+      total.value = data.count
+    } else {
+      ElMessage.error('加载题目失败')
+    }
+  } catch (error) {
+    console.error('加载题目失败:', error)
+    ElMessage.error('加载题目失败')
   } finally {
     loading.value = false
   }
@@ -135,8 +142,18 @@ const handleView = (row: OJProblem) => {
 const handleDelete = async (row: OJProblem) => {
   try {
     await ElMessageBox.confirm('确定要删除该题目吗？', '提示', { type: 'warning' })
-    ElMessage.success('删除成功')
-    loadData()
+    
+    const response = await fetch(`http://dsaol.asia/api/problems/${row.id}`, {
+      method: 'DELETE'
+    })
+    const data = await response.json()
+    
+    if (data.success) {
+      ElMessage.success('删除成功')
+      loadData()
+    } else {
+      ElMessage.error(data.message || '删除失败')
+    }
   } catch {}
 }
 
@@ -144,8 +161,20 @@ const handleToggleStatus = async (row: OJProblem) => {
   const newStatus = row.status === 'online' ? 'offline' : 'online'
   try {
     await ElMessageBox.confirm(`确定要${newStatus === 'online' ? '上线' : '下线'}该题目吗？`, '提示', { type: 'warning' })
-    ElMessage.success('操作成功')
-    loadData()
+    
+    const response = await fetch(`http://dsaol.asia/api/problems/${row.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus === 'online' ? 'ACTIVE' : 'INACTIVE' })
+    })
+    const data = await response.json()
+    
+    if (data.success) {
+      ElMessage.success('操作成功')
+      loadData()
+    } else {
+      ElMessage.error(data.message || '操作失败')
+    }
   } catch {}
 }
 
@@ -153,9 +182,47 @@ const handleSubmit = async () => {
   if (!formRef.value) return
   await formRef.value.validate(async (valid: boolean) => {
     if (!valid) return
-    ElMessage.success(dialogTitle.value + '成功')
-    dialogVisible.value = false
-    loadData()
+    
+    try {
+      const submitData = {
+        problemNo: formData.problemNo,
+        title: formData.title,
+        difficulty: formData.difficulty,
+        tags: (formData.tags || []).join(','),
+        description: formData.description,
+        template: formData.template?.java || '',
+        status: formData.status === 'online' ? 'ACTIVE' : 'INACTIVE'
+      }
+      
+      let response
+      if (formData.id) {
+        // 更新题目
+        response = await fetch(`http://dsaol.asia/api/problems/${formData.id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(submitData)
+        })
+      } else {
+        // 新增题目
+        response = await fetch('http://dsaol.asia/api/problems', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(submitData)
+        })
+      }
+      
+      const data = await response.json()
+      if (data.success) {
+        ElMessage.success(dialogTitle.value + '成功')
+        dialogVisible.value = false
+        loadData()
+      } else {
+        ElMessage.error(data.message || '操作失败')
+      }
+    } catch (error) {
+      console.error('保存题目失败:', error)
+      ElMessage.error('保存题目失败')
+    }
   })
 }
 
